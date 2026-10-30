@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sample salary slip (fictional)</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #e9e9ec; }
+  body { font-family: Arial, Helvetica, sans-serif; color: #1c1c1c; font-size: 13.5px; line-height: 1.5; }
+  .page { position: relative; width: 794px; min-height: 1123px; margin: 0 auto; background: #fff; padding: 56px 64px 72px; overflow: hidden; }
+  .wm { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+  .wm span { transform: rotate(-30deg); font-size: 64px; font-weight: 700; letter-spacing: 6px; color: rgba(0, 0, 0, .05); white-space: nowrap; }
+  header { display: flex; justify-content: space-between; align-items: flex-end; background: #1f4e5f; color: #fff; padding: 18px 22px; border-radius: 4px; }
+  .co { font-size: 19px; font-weight: 700; letter-spacing: .3px; }
+  .co-ar { font-family: Tahoma, Arial, sans-serif; font-size: 16px; direction: rtl; text-align: right; }
+  .addr { font-size: 11.5px; opacity: .85; margin-top: 2px; }
+  h1 { font-size: 16px; letter-spacing: 1px; text-transform: uppercase; margin: 22px 0 10px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; font-size: 13px; }
+  .grid div { display: flex; justify-content: space-between; border-bottom: 1px dotted #c8ccd0; padding: 6px 0; }
+  .grid b { font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+  th { background: #eef3f5; text-align: left; padding: 8px 10px; border: 1px solid #cfd8dc; }
+  td { padding: 8px 10px; border: 1px solid #cfd8dc; }
+  td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .net { margin-top: 18px; display: flex; justify-content: space-between; align-items: center; background: #eef3f5; border: 1px solid #cfd8dc; padding: 14px 18px; font-size: 16px; font-weight: 700; }
+  .notes { margin-top: 18px; font-size: 12.5px; color: #333; }
+  .notes li { margin: 3px 0; }
+  .foot { position: absolute; left: 64px; right: 64px; bottom: 28px; font-size: 10.5px; color: #888; text-align: center; }
+  @media print { html, body { background: #fff; } .page { margin: 0; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="wm"><span>SAMPLE · FICTIONAL · DEMO</span></div>
+
+  <header>
+    <div>
+      <div class="co">CRESCENT FACILITY SERVICES LLC</div>
+      <div class="addr">Business Bay 0, Dubai, United Arab Emirates</div>
+    </div>
+    <div class="co-ar">كريسنت لخدمات المرافق ذ.م.م</div>
+  </header>
+
+  <h1>Salary Slip · September 2026</h1>
+  <div class="grid">
+    <div><span>Employee</span><b>Joy Dela Cruz</b></div>
+    <div><span>Staff ID</span><b>CFS-2291</b></div>
+    <div><span>Position</span><b>Housekeeping Attendant</b></div>
+    <div><span>Nationality</span><b>Philippines</b></div>
+    <div><span>Date of joining</span><b>3 June 2024</b></div>
+    <div><span>Pay period</span><b>1 to 30 September 2026</b></div>
+    <div><span>Payment date</span><b>30 September 2026</b></div>
+    <div><span>Payment method</span><b>WPS bank transfer</b></div>
+    <div><span>Working hours</span><b>8 hours per day</b></div>
+    <div><span>Days worked / paid rest days</span><b>26 / 4 (Sundays)</b></div>
+  </div>
+
+  <div class="two">
+    <div>
+      <h1>Earnings</h1>
+      <table>
+        <tr><th>Item</th><th class="n">AED</th></tr>
+        <tr><td>Basic salary</td><td class="n">1,800.00</td></tr>
+        <tr><td>Transport allowance</td><td class="n">200.00</td></tr>
+        <tr><td>Overtime: 12 hours at 125%</td><td class="n">112.50</td></tr>
+        <tr><td><b>Gross pay</b></td><td class="n"><b>2,112.50</b></td></tr>
+      </table>
+    </div>
+    <div>
+      <h1>Deductions</h1>
+      <table>
+        <tr><th>Item</th><th class="n">AED</th></tr>
+        <tr><td>Absence</td><td class="n">0.00</td></tr>
+        <tr><td>Advances</td><td class="n">0.00</td></tr>
+        <tr><td>Other</td><td class="n">0.00</td></tr>
+        <tr><td><b>Total deductions</b></td><td class="n"><b>0.00</b></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="net"><span>Net pay transferred</span><span>AED 2,112.50</span></div>
+
+  <div class="notes">
+    <ul>
+      <li>Overtime rate: basic hourly rate (AED 7.50) × 125% × 12 hours.</li>
+      <li>Accommodation is provided by the company free of charge.</li>
+      <li>Service to date: 2 years 3 months. End-of-service gratuity is accruing and will be paid when employment ends.</li>
+      <li>Annual leave balance: 18 days.</li>
+    </ul>
+  </div>
+
+  <div class="foot">Fictional sample created for the Haqq demo. The company, people and figures are invented.</div>
+</div>
+</body>
+</html>
