@@ -1,0 +1,15 @@
+{
+  "name": "haqq",
+  "version": "1.0.0",
+  "description": "Haqq: voice-first UAE labour-rights helper for migrant workers, powered by Gemma 4",
+  "type": "module",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "serve": "npx serve ."
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
