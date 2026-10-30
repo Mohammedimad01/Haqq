@@ -5,8 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Haqq · Know your rights</title>
 <meta name="description" content="Haqq (حق · हक़): know your UAE work rights, in your language. Speak or snap a document and Gemma 4 explains it aloud.">
-<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0b0b0d" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" id="themeColor" content="#f5f5f7">
+<script>
+  // apply a saved theme before first paint so there is no flash
+  try { var t = localStorage.getItem('haqq.theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -41,8 +44,19 @@
     --f-urdu: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", var(--f-arab);
     color-scheme: light dark;
   }
+  /* dark tokens: explicit choice, or system preference when no choice was made */
+  :root[data-theme="dark"] {
+    --bg: #0b0b0d; --surface: #17181b; --surface-2: #232428;
+    --ink: #f2f2f4; --ink-2: #a9abb2; --ink-3: #8b8e96; --hair: rgba(255, 255, 255, .09);
+    --primary: #f2f2f4; --on-primary: #121315; --chrome: rgba(11, 11, 13, .72);
+    --red: #ff5a6e; --red-tint: #2a1418; --red-ink: #ff8f9c;
+    --amber: #ffb340; --amber-tint: #2a1f0e; --amber-ink: #ffc56b;
+    --green: #3ccf7a; --green-tint: #102419; --green-ink: #6fe0a0;
+    --shadow: 0 1px 0 rgba(255, 255, 255, .04) inset, 0 8px 24px rgba(0, 0, 0, .35);
+    color-scheme: dark;
+  }
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
       --bg: #0b0b0d; --surface: #17181b; --surface-2: #232428;
       --ink: #f2f2f4; --ink-2: #a9abb2; --ink-3: #8b8e96; --hair: rgba(255, 255, 255, .09);
       --primary: #f2f2f4; --on-primary: #121315; --chrome: rgba(11, 11, 13, .72);
@@ -50,12 +64,14 @@
       --amber: #ffb340; --amber-tint: #2a1f0e; --amber-ink: #ffc56b;
       --green: #3ccf7a; --green-tint: #102419; --green-ink: #6fe0a0;
       --shadow: 0 1px 0 rgba(255, 255, 255, .04) inset, 0 8px 24px rgba(0, 0, 0, .35);
+      color-scheme: dark;
     }
   }
+  :root[data-theme="light"] { color-scheme: light; }
 
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 400 1rem/1.5 var(--f-latin); overflow-x: hidden; min-height: 100dvh; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 400 1rem/1.5 var(--f-latin); overflow-x: hidden; min-height: 100dvh; transition: background-color .3s ease, color .3s ease; }
   button, input, select, textarea { font: inherit; color: inherit; }
   button { cursor: pointer; border: 0; background: none; padding: 0; }
   button:disabled { cursor: not-allowed; opacity: .4; }
@@ -248,6 +264,44 @@
   .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); z-index: 50; transform: translateX(-50%); max-width: calc(100% - 32px); padding: 12px 18px; border-radius: var(--r-pill); background: var(--primary); color: var(--on-primary); font-size: .9375rem; font-weight: 500; box-shadow: 0 10px 30px rgba(0, 0, 0, .2); animation: toast .35s var(--ease) both; }
   @keyframes toast { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
+  /* ---------- empty state (desktop only) ---------- */
+  .empty { display: none; padding: 24px; }
+  .empty-head { display: flex; align-items: center; gap: 14px; }
+  .empty-head h2 { margin: 0; font-size: 1.375rem; font-weight: 700; letter-spacing: -.015em; }
+  .empty-head p { margin: 2px 0 0; color: var(--ink-2); }
+  .rules { list-style: none; margin: 20px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+  .rules li { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border-radius: var(--r-md); background: var(--bg); }
+  .rules .ph { flex: none; font-size: 22px; margin-top: 1px; }
+  .rules strong { display: block; font-weight: 600; line-height: 1.35; }
+  .rules span { display: block; color: var(--ink-2); font-size: .875rem; margin-top: 2px; }
+  .empty-foot { margin: 18px 0 0; color: var(--ink-3); font-size: .875rem; display: flex; align-items: center; gap: 8px; }
+
+  /* ---------- desktop: controls left, conversation right ---------- */
+  @media (min-width: 960px) {
+    .bar-in { max-width: 1180px; padding: 0 32px; height: 64px; }
+    main { max-width: 1180px; padding: 28px 32px 48px; display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); column-gap: 56px; align-items: start; }
+    .hero { padding-top: 8px; }
+    .hero h1 { font-size: clamp(2.5rem, 3.4vw, 3.25rem); }
+    .hero h1.lang-ur { font-size: 2.5rem; }
+    .hero h1.lang-ml { font-size: 2.25rem; }
+    .langs { flex-wrap: wrap; overflow: visible; margin: 22px 0 0; padding: 0; }
+    .voice { padding: 28px 0 24px; }
+    .mic-wrap { width: 116px; height: 116px; }
+    .mic { width: 100px; height: 100px; font-size: 40px; }
+    .stage { min-height: calc(100dvh - 160px); }
+    .empty { display: block; }
+    .thread { margin-top: 0; }
+    .you { max-width: 75%; }
+    .answer { font-size: 1.3125rem; }
+    footer { grid-column: 1 / -1; margin-top: 56px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    footer p { margin: 0; max-width: 60ch; }
+    .fine { margin-top: 0; width: 100%; }
+  }
+  /* keep the controls in view only when the viewport is tall enough to show them all */
+  @media (min-width: 960px) and (min-height: 860px) {
+    .side { position: sticky; top: 92px; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     .listening-ring::before, .listening-ring::after { animation: none !important; }
@@ -262,6 +316,7 @@
   <div class="bar-in">
     <div class="brand">Haqq <span class="marks"><span class="a">حق</span> · <span class="d">हक़</span></span></div>
     <div class="bar-actions">
+      <button class="icon-btn press" id="themeBtn" type="button" aria-label="Switch to dark theme"><i class="ph ph-moon" id="themeIcon"></i></button>
       <button class="icon-btn press" id="qrBtn" type="button" aria-label="Show QR code for this page"><i class="ph ph-qr-code"></i></button>
       <button class="icon-btn press" id="settingsBtn" type="button" aria-label="Settings"><i class="ph ph-gear-six"></i></button>
     </div>
@@ -269,6 +324,7 @@
 </header>
 
 <main>
+  <div class="side">
   <section class="hero">
     <h1 id="headline">Know your rights</h1>
     <p>Ask out loud or scan your contract. Haqq explains it in your language.</p>
@@ -306,6 +362,24 @@
     </button>
   </div>
   <input type="file" id="file" accept="image/*" class="hidden">
+  </div>
+
+  <div class="stage">
+  <section class="card empty" id="emptyState" aria-labelledby="emptyTitle">
+    <div class="empty-head">
+      <span class="row-icon"><i class="ph ph-scales"></i></span>
+      <div><h2 id="emptyTitle">What Haqq checks</h2><p>Six UAE labour rules, explained in your language.</p></div>
+    </div>
+    <ul class="rules">
+      <li><i class="ph ph-identification-card"></i><div><strong>Your passport stays with you</strong><span>An employer must not keep it.</span></div></li>
+      <li><i class="ph ph-clock"></i><div><strong>8 hours a day, 48 a week</strong><span>Extra hours are paid as overtime.</span></div></li>
+      <li><i class="ph ph-calendar-check"></i><div><strong>One paid rest day a week</strong><span>Every week, not only some.</span></div></li>
+      <li><i class="ph ph-bank"></i><div><strong>Salary every month</strong><span>Paid through WPS, to a bank or exchange.</span></div></li>
+      <li><i class="ph ph-hand-coins"></i><div><strong>Gratuity after one year</strong><span>End-of-service pay you have earned.</span></div></li>
+      <li><i class="ph ph-prohibit"></i><div><strong>No fees charged to you</strong><span>No recruitment, visa or resignation fees.</span></div></li>
+    </ul>
+    <p class="empty-foot"><i class="ph ph-arrow-left"></i>Speak, type, or try a sample to see a Risk Check here.</p>
+  </section>
 
   <section class="thread" id="thread" aria-live="polite">
     <div id="youCard" class="you hidden"></div>
@@ -325,6 +399,7 @@
       <div class="meta" id="meta"></div>
     </div>
   </section>
+  </div>
 
   <footer>
     <p>Haqq gives general information, not legal advice. For help with your case, call the Ministry of Human Resources (MOHRE).</p>
@@ -620,6 +695,7 @@ Worker's message:
     if (busy) return;
     lastRequest = req;
     stopSpeaking();
+    $('emptyState').classList.add('hidden');
     showYou(req);
     setBusy(true);
     const t0 = performance.now();
@@ -957,6 +1033,24 @@ Worker's message:
     .then((r) => (r.ok && (r.headers.get('content-type') || '').includes('json') ? r.json() : null))
     .then((d) => { serverHasKey = d ? Boolean(d.hasKey) : null; updateApiStatus(); })
     .catch(() => updateApiStatus());
+
+  // ---------- theme ----------
+  const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  const currentTheme = () => document.documentElement.dataset.theme || (darkQuery.matches ? 'dark' : 'light');
+  function syncThemeUI() {
+    const dark = currentTheme() === 'dark';
+    $('themeIcon').className = dark ? 'ph ph-sun' : 'ph ph-moon';
+    $('themeBtn').setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+    $('themeColor').setAttribute('content', dark ? '#0b0b0d' : '#f5f5f7');
+  }
+  $('themeBtn').onclick = () => {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    store.set('haqq.theme', next);
+    syncThemeUI();
+  };
+  darkQuery.addEventListener?.('change', syncThemeUI);
+  syncThemeUI();
 
   // ---------- init ----------
   renderChips();
