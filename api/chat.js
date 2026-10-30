@@ -42,19 +42,30 @@ export default async function handler(req, res) {
   });
 
   try {
-    let upstream = await send(config);
+    let cfg = config;
+    let upstream = await send(cfg);
     let text = await upstream.text();
     let fallback = false;
-    if (upstream.status === 400 && (config.thinkingConfig || config.responseMimeType)) {
+    let retried = false;
+    if (upstream.status === 400 && (cfg.thinkingConfig || cfg.responseMimeType)) {
       // the model may reject JSON mode or thinkingConfig: retry once with the basics
       console.warn('[haqq] 400 with extended config, retrying basic:', text.slice(0, 300));
-      upstream = await send({ temperature: config.temperature, maxOutputTokens: config.maxOutputTokens });
+      cfg = { temperature: config.temperature, maxOutputTokens: config.maxOutputTokens };
+      upstream = await send(cfg);
       text = await upstream.text();
       fallback = true;
     }
+    if ([429, 500, 503].includes(upstream.status) && Date.now() - started < 15000) {
+      // Gemma on the Gemini API is sometimes briefly overloaded: one quick retry before giving up
+      console.warn(`[haqq] ${upstream.status} from Gemini API, retrying once:`, text.slice(0, 200));
+      await new Promise((r) => setTimeout(r, 1200));
+      upstream = await send(cfg);
+      text = await upstream.text();
+      retried = true;
+    }
     let usage = {};
     try { usage = JSON.parse(text).usageMetadata || {}; } catch { /* error bodies may not be JSON */ }
-    console.log(`[haqq] ${model} status=${upstream.status} ms=${Date.now() - started} thoughts=${usage.thoughtsTokenCount ?? 0} out=${usage.candidatesTokenCount ?? 0}${fallback ? ' fallback' : ''}`);
+    console.log(`[haqq] ${model} status=${upstream.status} ms=${Date.now() - started} thoughts=${usage.thoughtsTokenCount ?? 0} out=${usage.candidatesTokenCount ?? 0}${fallback ? ' fallback' : ''}${retried ? ' retried' : ''}`);
     res.setHeader('Content-Type', 'application/json');
     return res.status(upstream.status).send(text);
   } catch (err) {

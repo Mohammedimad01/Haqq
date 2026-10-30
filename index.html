@@ -347,7 +347,7 @@
   <div class="group">
     <button class="row" id="scanBtn" type="button" data-lock>
       <span class="row-icon"><i class="ph ph-camera"></i></span>
-      <span class="row-text"><span class="row-title">Scan a document</span><span class="row-sub">Contract, payslip or notice</span></span>
+      <span class="row-text"><span class="row-title">Scan a document</span><span class="row-sub">Photo or PDF of a contract, payslip or notice</span></span>
       <i class="ph ph-caret-right chev"></i>
     </button>
     <button class="row" id="sampleContract" type="button" data-lock>
@@ -361,7 +361,7 @@
       <i class="ph ph-caret-right chev"></i>
     </button>
   </div>
-  <input type="file" id="file" accept="image/*" class="hidden">
+  <input type="file" id="file" accept="image/*,application/pdf,.pdf" class="hidden">
   </div>
 
   <div class="stage">
@@ -384,7 +384,7 @@
   <section class="thread" id="thread" aria-live="polite">
     <div id="youCard" class="you hidden"></div>
     <div id="loading" class="card loading hidden" role="status">
-      <div class="loading-head"><span class="activity" aria-hidden="true"></span>Gemma is reading…</div>
+      <div class="loading-head"><span class="activity" aria-hidden="true"></span><span id="loadingText">Gemma is reading…</span><span id="loadingNative"></span></div>
       <div class="sk" style="width:92%"></div><div class="sk" style="width:78%"></div><div class="sk" style="width:85%"></div><div class="sk" style="width:46%"></div>
     </div>
     <div id="errorCard" class="card error hidden" role="alert"></div>
@@ -450,8 +450,11 @@
   const MODELS = ['gemma-4-26b-a4b-it', 'gemma-4-31b-it'];
   const TIMEOUT_MS = 45000;
   // Gemma 4 thinks by default on the Gemini API; MINIMAL keeps answers fast
-  const GEN_CONFIG = { temperature: 0.3, maxOutputTokens: 2048, responseMimeType: 'application/json', thinkingConfig: { thinkingLevel: 'MINIMAL' } };
-  const BASIC_CONFIG = { temperature: 0.3, maxOutputTokens: 2048 };
+  // thinking tokens count against maxOutputTokens, so leave plenty of room or replies come back empty
+  const GEN_CONFIG = { temperature: 0.3, maxOutputTokens: 8192, responseMimeType: 'application/json', thinkingConfig: { thinkingLevel: 'MINIMAL' } };
+  const BASIC_CONFIG = { temperature: 0.3, maxOutputTokens: 8192 };
+  const MAX_ATTEMPTS = 3;
+  const MAX_PDF_PAGES = 3;
   const MOHRE = '600590000';
   const LANGS = {
     hi: { name: 'Hindi', native: 'हिन्दी', sr: 'hi-IN', tts: ['hi'], script: 'Devanagari', rtl: false,
@@ -473,6 +476,17 @@
           h1: 'Know your rights', ph: 'Type your question', hint: 'Tap and speak your question',
           risk: { red: 'Rules are being broken', amber: 'Check this carefully', green: 'This looks fine' } },
   };
+  // result-screen labels in each language
+  const UI = {
+    hi: { asked: 'आपने पूछा', said: 'आपने कहा', doc: 'आपका दस्तावेज़', reading: 'पढ़ रहा है…', listen: 'सुनें', stop: 'रोकें', share: 'परिवार को भेजें', mohre: 'इस बारे में MOHRE से बात करें' },
+    ur: { asked: 'آپ نے پوچھا', said: 'آپ نے کہا', doc: 'آپ کی دستاویز', reading: 'پڑھ رہا ہے…', listen: 'سنیں', stop: 'روکیں', share: 'گھر والوں کو بھیجیں', mohre: 'اس بارے میں MOHRE سے بات کریں' },
+    ml: { asked: 'നിങ്ങൾ ചോദിച്ചത്', said: 'നിങ്ങൾ പറഞ്ഞത്', doc: 'നിങ്ങളുടെ രേഖ', reading: 'വായിക്കുന്നു…', listen: 'കേൾക്കുക', stop: 'നിർത്തുക', share: 'കുടുംബത്തിന് അയയ്ക്കുക', mohre: 'ഇതിനെക്കുറിച്ച് MOHRE-നോട് സംസാരിക്കുക' },
+    tl: { asked: 'Tanong mo', said: 'Sinabi mo', doc: 'Ang dokumento mo', reading: 'Binabasa…', listen: 'Pakinggan', stop: 'Itigil', share: 'Ibahagi sa pamilya', mohre: 'Kausapin ang MOHRE tungkol dito' },
+    ar: { asked: 'سؤالك', said: 'قلت', doc: 'مستندك', reading: 'يقرأ…', listen: 'استمع', stop: 'إيقاف', share: 'شارك مع العائلة', mohre: 'تحدث مع وزارة الموارد البشرية بشأن هذا' },
+    en: { asked: 'You asked', said: 'You said', doc: 'Your document', reading: '', listen: 'Listen', stop: 'Stop', share: 'Share with family', mohre: 'Talk to MOHRE about this' },
+  };
+  // used to check that a reply really is in the chosen script
+  const SCRIPT_RE = { hi: /[ऀ-ॿ]/, ur: /[؀-ۿ]/, ar: /[؀-ۿ]/, ml: /[ഀ-ൿ]/ };
   const RISK_EN = { red: 'High risk', amber: 'Needs a closer look', green: 'Looks OK' };
   const RISK_ICON = { red: 'ph-warning-octagon', amber: 'ph-warning', green: 'ph-check' };
   const ISSUE_ICON = { red: 'ph-x-circle', amber: 'ph-warning-circle', green: 'ph-check-circle' };
@@ -576,10 +590,12 @@ Note: July 2026 salary is pending and will be paid later.`;
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   // replay a CSS entrance animation on an element that is being reused
   function replay(el) { el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; }
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-  function showYou({ text, imageUrl, label, isDoc }) {
+  function showYou({ text, imageUrl, label, labelKey, isDoc }) {
     const c = $('youCard');
-    c.innerHTML = `<span class="label">${esc(label || 'You asked')}</span>
+    const lbl = label || UI[lang][labelKey || 'asked'];
+    c.innerHTML = `<span class="label${label ? '' : ` lang-${lang}`}">${esc(lbl)}</span>
       ${imageUrl ? `<img src="${imageUrl}" alt="Your document">` : ''}
       ${text ? `<div class="bubble${isDoc ? ' doc' : ''}" dir="auto">${esc(text)}</div>` : ''}`;
     c.classList.remove('hidden');
@@ -587,9 +603,11 @@ Note: July 2026 salary is pending and will be paid later.`;
   }
 
   // ---------- prompt ----------
-  function buildPrompt(question, hasImage) {
+  function buildPrompt(question, pages) {
     const L = LANGS[lang];
     return `You are Haqq, a kind helper for migrant workers in the UAE. Many users have little schooling. Explain simply, like a trusted friend.
+
+LANGUAGE: The worker chose ${L.name}. Always reply in ${L.name}, written in ${L.script} script, even when the question or the document is in English, Arabic or any other language. Translate everything you explain into ${L.name}.
 
 UAE labour rules you may use. Do NOT invent any other laws, article numbers, amounts or deadlines:
 1. The employer must not keep the worker's passport.
@@ -600,7 +618,7 @@ UAE labour rules you may use. Do NOT invent any other laws, article numbers, amo
 6. The worker must not be charged recruitment fees, visa costs, or resignation/exit fees.
 If something is not covered by these rules, say you are not sure and advise calling MOHRE ${MOHRE}.
 
-${hasImage ? 'The worker sent a photo of a document (contract, payslip, notice or message). Read it carefully. If it is unreadable or not a work document, say so kindly and ask for a clearer photo.\n\n' : ''}Reply with ONLY one JSON object, no markdown, no code fences, no text before or after:
+${pages ? `The worker sent ${pages > 1 ? `${pages} pages of a document, in order` : 'a photo of a document'} (contract, payslip, notice or message). Read it carefully. If it is unreadable or not a work document, say so kindly and ask for a clearer photo.\n\n` : ''}Reply with ONLY one JSON object, no markdown, no code fences, no text before or after:
 {"risk":"red|amber|green|none","issues_en":["short English label, max 8 words"],"issues_native":["the same issue in ${L.name}, same order"],"answer":"spoken reply"}
 
 Rules for the JSON:
@@ -610,7 +628,9 @@ Rules for the JSON:
 - issues_native must also be in ${L.script} script.
 
 Worker's message:
-"""${question}"""`;
+"""${question}"""
+
+Remember: "answer" and every "issues_native" item must be in ${L.name} (${L.script} script).`;
   }
 
   // ---------- Gemma call ----------
@@ -657,6 +677,7 @@ Worker's message:
       const code = data?.error?.status || '';
       const detail = `HTTP ${res.status}${code ? ' ' + code : ''}: ${msg}`;
       console.warn('[Haqq] Gemma error', detail);
+      if (res.status === 503 || code === 'UNAVAILABLE') throw new HaqqError('rate', 'Gemma is busy right now. Please try again in a moment.', detail);
       if (res.status === 429 || code === 'RESOURCE_EXHAUSTED') throw new HaqqError('rate', 'Too many requests right now. Please wait a few seconds and try again.', detail);
       if (code === 'NO_KEY' || /api key/i.test(msg) || res.status === 401 || res.status === 403) throw new HaqqError('key', 'The API key is missing or invalid. Set GEMINI_API_KEY on Vercel, or add a key in Settings.', detail);
       if (!data && (res.status === 404 || res.status === 405)) throw new HaqqError('noapi', 'The /api/chat server is not running here. Use "vercel dev", or add an API key in Settings.', detail);
@@ -700,6 +721,29 @@ Worker's message:
   }
 
   // ---------- main flow ----------
+  const RETRYABLE = new Set(['network', 'timeout', 'server', 'rate']);
+  function setLoadingText(attempt) {
+    $('loadingText').textContent = attempt > 1 ? `Gemma is busy, trying again (${attempt} of ${MAX_ATTEMPTS})…` : 'Gemma is reading…';
+    const n = $('loadingNative');
+    n.textContent = UI[lang].reading;
+    n.className = `lang-${lang}`;
+  }
+  // brief overloads, timeouts and empty replies retry by themselves instead of needing Try again
+  async function callWithRetry(parts) {
+    for (let attempt = 1; ; attempt++) {
+      try {
+        return await callGemma(parts);
+      } catch (err) {
+        if (!(err instanceof HaqqError) || !RETRYABLE.has(err.kind) || attempt >= MAX_ATTEMPTS) throw err;
+        console.warn(`[Haqq] attempt ${attempt} failed (${err.kind}), retrying:`, err.detail);
+        setLoadingText(attempt + 1);
+        await sleep(err.kind === 'rate' ? 4000 : 1500 * attempt);
+      }
+    }
+  }
+  const inScript = (code, s) => !SCRIPT_RE[code] || SCRIPT_RE[code].test(s || '');
+  const wrongLanguage = (r, code) => !inScript(code, r.answer) || r.issues_native.some((s) => !inScript(code, s));
+
   async function ask(req) {
     if (busy) return;
     lastRequest = req;
@@ -707,22 +751,34 @@ Worker's message:
     $('emptyState').classList.add('hidden');
     showYou(req);
     setBusy(true);
+    setLoadingText(1);
     const t0 = performance.now();
-    const prompt = buildPrompt(req.question || req.text, Boolean(req.image));
-    const parts = [{ text: prompt }];
-    if (req.image) parts.push({ inline_data: { mime_type: 'image/jpeg', data: req.image } });
+    const code = lang;
+    const L = LANGS[code];
+    const pages = req.images || [];
+    const prompt = buildPrompt(req.question || req.text, pages.length);
+    const parts = [{ text: prompt }, ...pages.map((data) => ({ inline_data: { mime_type: 'image/jpeg', data } }))];
     try {
-      let text = await callGemma(parts);
+      let text = await callWithRetry(parts);
       let result = parseReply(text);
       let tries = 1;
       if (!result) {
         console.warn('[Haqq] Malformed JSON, retrying once. Raw:', text);
         parts[0] = { text: prompt + '\n\nIMPORTANT: Your previous reply was not valid JSON. Return valid JSON only: exactly one JSON object, no markdown, no extra text.' };
-        text = await callGemma(parts);
+        text = await callWithRetry(parts);
         result = parseReply(text) || fallbackReply(text);
-        tries = 2;
+        tries++;
       }
-      result.lang = lang;
+      if (!result.fallback && wrongLanguage(result, code)) {
+        console.warn(`[Haqq] Reply not in ${L.name}, asking once more`);
+        parts[0] = { text: prompt + `\n\nIMPORTANT: Your previous reply was not written in ${L.name}. Write "answer" and every "issues_native" item in ${L.name}, using ${L.script} script only. Return valid JSON only.` };
+        try {
+          const fixed = parseReply(await callWithRetry(parts));
+          if (fixed && !wrongLanguage(fixed, code)) result = fixed;
+        } catch { /* keep the first answer rather than failing */ }
+        tries++;
+      }
+      result.lang = code;
       result.ms = Math.round(performance.now() - t0);
       result.tries = tries;
       lastResult = result;
@@ -779,7 +835,7 @@ Worker's message:
           ${n ? `<div class="count" aria-label="${n} issue${n === 1 ? '' : 's'}">${n}</div>` : ''}
         </div>
         ${n ? `<ul class="issues">${items}</ul>` : ''}
-        <div class="mohre"><span>Talk to MOHRE about this</span><a class="btn secondary press" href="tel:${MOHRE}"><i class="ph ph-phone"></i><span>${MOHRE}</span></a></div>`;
+        <div class="mohre"><span class="lang-${r.lang}" dir="${dir}">${esc(UI[r.lang].mohre)}</span><a class="btn secondary press" href="tel:${MOHRE}"><i class="ph ph-phone"></i><span>${MOHRE}</span></a></div>`;
       rc.classList.remove('hidden');
       replay(rc);
     }
@@ -789,6 +845,8 @@ Worker's message:
     ans.dir = dir;
     ans.lang = r.lang === 'tl' ? 'fil' : r.lang;
     $('voiceNotice').classList.add('hidden');
+    $('shareBtn').innerHTML = `<i class="ph ph-export"></i><span class="lang-${r.lang}">${esc(UI[r.lang].share)}</span>`;
+    setPlayUI(false);
     $('meta').textContent = `Answered by Gemma 4 in ${(r.ms / 1000).toFixed(1)}s${r.tries > 1 ? ', after one retry' : ''}${r.fallback ? ', shown as plain text' : ''}`;
     $('answerCard').classList.remove('hidden');
     replay($('answerCard'));
@@ -816,7 +874,11 @@ Worker's message:
   }
   function setPlayUI(on) {
     speaking = on;
-    $('playBtn').innerHTML = on ? '<i class="ph-fill ph-stop"></i><span>Stop</span>' : '<i class="ph-fill ph-speaker-high"></i><span>Listen</span>';
+    const code = lastResult?.lang || lang;
+    const ui = UI[code];
+    $('playBtn').innerHTML = on
+      ? `<i class="ph-fill ph-stop"></i><span class="lang-${code}">${esc(ui.stop)}</span>`
+      : `<i class="ph-fill ph-speaker-high"></i><span class="lang-${code}">${esc(ui.listen)}</span>`;
   }
   function stopSpeaking() { if (synth) synth.cancel(); setPlayUI(false); }
   async function speak(text, code) {
@@ -887,7 +949,7 @@ Worker's message:
     rec.onend = () => {
       setMicUI(false);
       const q = $('q').value.trim();
-      if (q) { $('q').value = ''; ask({ text: q, label: 'You said' }); }
+      if (q) { $('q').value = ''; ask({ text: q, labelKey: 'said' }); }
     };
     try { rec.start(); setMicUI(true); } catch (err) { toast(`Mic error: ${err.message}`); }
   };
@@ -920,19 +982,63 @@ Worker's message:
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
+    const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
     try {
-      const { base64, url } = await downscale(file, 1600);
+      let pages;
+      if (isPdf) {
+        toast('Reading the PDF…');
+        const out = await pdfToImages(file, 1600, MAX_PDF_PAGES);
+        if (!out.pages.length) throw new Error('The PDF has no pages');
+        pages = out.pages;
+        if (out.total > MAX_PDF_PAGES) toast(`Reading the first ${MAX_PDF_PAGES} of ${out.total} pages`);
+      } else {
+        pages = [await downscale(file, 1600)];
+      }
       const typed = $('q').value.trim();
       $('q').value = '';
       ask({
-        image: base64, imageUrl: url, label: 'Your document',
-        text: typed || 'Please explain this document',
+        images: pages.map((p) => p.base64), imageUrl: pages[0].url, labelKey: 'doc',
+        text: typed || (isPdf ? file.name : 'Please explain this document'),
         question: typed || 'Please read this document and explain it to me. Is anything unfair or against the rules?',
       });
     } catch (err) {
-      showError(new HaqqError('server', "Couldn't read that photo. Please try another one.", String(err.message || err)));
+      showError(new HaqqError('server', isPdf ? "Couldn't open that PDF. Try another file, or a photo of the page." : "Couldn't read that photo. Please try another one.", String(err.message || err)));
     }
   });
+
+  // PDFs are rendered to page images on the phone, so Gemma reads them like photos
+  const PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+  let pdfLib = null;
+  function loadPdfLib() {
+    if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+    return pdfLib || (pdfLib = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = PDFJS + 'pdf.min.js';
+      s.onload = () => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + 'pdf.worker.min.js'; resolve(window.pdfjsLib); };
+      s.onerror = () => { pdfLib = null; reject(new Error('PDF reader failed to load')); };
+      document.head.appendChild(s);
+    }));
+  }
+  async function pdfToImages(file, max, maxPages) {
+    const lib = await loadPdfLib();
+    const pdf = await lib.getDocument({ data: await file.arrayBuffer() }).promise;
+    const pages = [];
+    for (let i = 1; i <= Math.min(pdf.numPages, maxPages); i++) {
+      const page = await pdf.getPage(i);
+      const base = page.getViewport({ scale: 1 });
+      const viewport = page.getViewport({ scale: Math.min(3, max / Math.max(base.width, base.height)) });
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(viewport.width);
+      canvas.height = Math.round(viewport.height);
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      await page.render({ canvasContext: ctx, viewport }).promise;
+      const url = canvas.toDataURL('image/jpeg', 0.82);
+      pages.push({ base64: url.split(',')[1], url });
+    }
+    return { pages, total: pdf.numPages };
+  }
   function downscale(file, max) {
     return new Promise((resolve, reject) => {
       const src = URL.createObjectURL(file);
