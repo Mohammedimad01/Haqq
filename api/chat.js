@@ -3,7 +3,7 @@
 
 const ALLOWED_MODELS = ['gemma-4-26b-a4b-it', 'gemma-4-31b-it'];
 const DEFAULT_MODEL = ALLOWED_MODELS[0];
-const TIMEOUT_MS = 24000; // client aborts at 25s; answer slightly before that
+const TIMEOUT_MS = 40000; // client aborts at 45s; answer slightly before that
 
 export default async function handler(req, res) {
   // GET = health check, handy for verifying a deploy: /api/chat
@@ -29,24 +29,40 @@ export default async function handler(req, res) {
 
   const model = ALLOWED_MODELS.includes(body.model) ? body.model : DEFAULT_MODEL;
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+  const config = body.generationConfig || {};
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  const started = Date.now();
+
+  const send = (generationConfig) => fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+    body: JSON.stringify({ contents: body.contents, generationConfig }),
+    signal: ctrl.signal,
+  });
 
   try {
-    const upstream = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-      body: JSON.stringify({ contents: body.contents, generationConfig: body.generationConfig }),
-      signal: ctrl.signal,
-    });
-    const text = await upstream.text();
+    let upstream = await send(config);
+    let text = await upstream.text();
+    let fallback = false;
+    if (upstream.status === 400 && (config.thinkingConfig || config.responseMimeType)) {
+      // the model may reject JSON mode or thinkingConfig: retry once with the basics
+      console.warn('[haqq] 400 with extended config, retrying basic:', text.slice(0, 300));
+      upstream = await send({ temperature: config.temperature, maxOutputTokens: config.maxOutputTokens });
+      text = await upstream.text();
+      fallback = true;
+    }
+    let usage = {};
+    try { usage = JSON.parse(text).usageMetadata || {}; } catch { /* error bodies may not be JSON */ }
+    console.log(`[haqq] ${model} status=${upstream.status} ms=${Date.now() - started} thoughts=${usage.thoughtsTokenCount ?? 0} out=${usage.candidatesTokenCount ?? 0}${fallback ? ' fallback' : ''}`);
     res.setHeader('Content-Type', 'application/json');
     return res.status(upstream.status).send(text);
   } catch (err) {
     const timedOut = err.name === 'AbortError';
+    console.error(`[haqq] ${model} ${timedOut ? 'timeout' : 'fetch error'} after ${Date.now() - started}ms`, err.message);
     return res.status(timedOut ? 504 : 502).json({
       error: {
-        message: timedOut ? 'Gemma did not respond in time' : `Could not reach the Gemini API: ${err.message}`,
+        message: timedOut ? `Gemma did not respond within ${TIMEOUT_MS / 1000}s` : `Could not reach the Gemini API: ${err.message}`,
         status: timedOut ? 'TIMEOUT' : 'UPSTREAM_UNREACHABLE',
       },
     });

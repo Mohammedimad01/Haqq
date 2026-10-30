@@ -448,7 +448,10 @@
 
   // ---------- config ----------
   const MODELS = ['gemma-4-26b-a4b-it', 'gemma-4-31b-it'];
-  const TIMEOUT_MS = 25000;
+  const TIMEOUT_MS = 45000;
+  // Gemma 4 thinks by default on the Gemini API; MINIMAL keeps answers fast
+  const GEN_CONFIG = { temperature: 0.3, maxOutputTokens: 2048, responseMimeType: 'application/json', thinkingConfig: { thinkingLevel: 'MINIMAL' } };
+  const BASIC_CONFIG = { temperature: 0.3, maxOutputTokens: 2048 };
   const MOHRE = '600590000';
   const LANGS = {
     hi: { name: 'Hindi', native: 'हिन्दी', sr: 'hi-IN', tts: ['hi'], script: 'Devanagari', rtl: false,
@@ -620,7 +623,7 @@ Worker's message:
     const model = MODELS.includes(store.get('haqq.model')) ? store.get('haqq.model') : MODELS[0];
     const payload = {
       contents: [{ role: 'user', parts }],
-      generationConfig: { temperature: 0.3, maxOutputTokens: 4096 },
+      generationConfig: GEN_CONFIG,
     };
     const url = key
       ? `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`
@@ -634,8 +637,14 @@ Worker's message:
     try {
       res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(payload), signal: ctrl.signal });
       raw = await res.text();
+      if (key && res.status === 400) {
+        // direct mode: the model may reject JSON mode or thinkingConfig, so retry with the basics
+        payload.generationConfig = BASIC_CONFIG;
+        res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(payload), signal: ctrl.signal });
+        raw = await res.text();
+      }
     } catch (err) {
-      if (err.name === 'AbortError') throw new HaqqError('timeout', 'Gemma took longer than 25 seconds to answer.', 'Request aborted after 25s');
+      if (err.name === 'AbortError') throw new HaqqError('timeout', `Gemma took longer than ${TIMEOUT_MS / 1000} seconds to answer.`, `Request aborted after ${TIMEOUT_MS / 1000}s`);
       throw new HaqqError('network', "Can't reach the internet or the Haqq server.", String(err.message || err));
     } finally {
       clearTimeout(timer);
