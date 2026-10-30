@@ -1,6 +1,6 @@
 # Haqq (حق · हक़) - Know your rights, in your language
 
-**Haqq** is a voice-first web app for migrant workers in the UAE. A worker speaks a question or snaps a photo of a contract, payslip or notice. **Gemma 4** reads it and explains it **aloud** in simple **Hindi, Urdu, Malayalam, Tagalog, Arabic or English**. A red / amber / green **Risk Check** card flags terms that break UAE labour rules and points the worker to the **MOHRE helpline (600590000)**.
+**Haqq** is a voice-first web app for migrant workers in the UAE. A worker speaks a question or snaps a photo of a contract, payslip or notice. **Gemma 4** reads it and explains it **aloud** in **20 languages**, including Hindi, Urdu, Malayalam, Tagalog, Arabic, Bengali, Nepali, Tamil and more. A red / amber / green **Risk Check** card flags terms that break UAE labour rules and points the worker to the **MOHRE helpline (600590000)**.
 
 > ⚠️ **Not legal advice.** Haqq gives simple, general information. For your case, contact MOHRE on **600590000**.
 
@@ -10,10 +10,12 @@ Millions of workers in the UAE sign contracts and receive payslips in a language
 
 ## Features
 
-- 🎤 **Voice in, voice out**: Web Speech API mic input in 6 languages; answers spoken with the device's text-to-speech.
+- 🎤 **Voice in, voice out**: Web Speech API mic input with a live transcript of what Haqq heard; answers spoken with the device's text-to-speech.
+- 💬 **Voice chat mode**: hands-free conversation. After each spoken answer Haqq listens again, and the last 4 turns go to Gemma as context, so follow-ups like "so what should I do?" work. A conversation log and a New chat button sit above the answer.
+- 🗣️ **20 languages**: Hindi, Urdu, Malayalam, Tagalog, Arabic, English, Bengali, Nepali, Tamil, Telugu, Sinhala, Punjabi, Pashto, Amharic, Swahili, Indonesian, Kannada, Marathi, Gujarati and Persian. Six are one tap away; the rest are under "More". UI translations for the newer languages are best-effort and would benefit from native-speaker review. Voice input and output depend on what each browser and device supports.
 - 📷 **Scan a document**: photo is downscaled to 1600px JPEG in the browser and sent to Gemma 4 as an image.
 - 🚦 **Risk Check card**: red / amber / green, with an issue count and each issue shown in the worker's language **and** in English.
-- 🌍 **Real multilingual UX**: native-script answers (never romanized), automatic right-to-left layout for Urdu and Arabic, Noto fonts for Devanagari, Nastaliq, Naskh and Malayalam.
+- 🌍 **Real multilingual UX**: native-script answers (never romanized), automatic right-to-left layout for Urdu, Arabic, Pashto and Persian, and a Noto font for every script (Devanagari, Nastaliq, Naskh, Malayalam, Bengali, Tamil, Telugu, Sinhala, Gurmukhi, Ethiopic, Kannada, Gujarati).
 - 📤 **Share with family**: Web Share API (falls back to copy to clipboard) with the answer plus the MOHRE number.
 - 🧪 **Two built-in samples**: a contract and a payslip with planted violations, for an instant demo.
 - 📄 **PDF support**: PDFs are rendered to page images in the browser (first 3 pages) and read like photos.

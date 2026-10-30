@@ -16,7 +16,7 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600&family=Noto+Sans+Malayalam:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;500;600&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600&family=Noto+Sans+Malayalam:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;500;600&family=Noto+Nastaliq+Urdu:wght@400;600&family=Noto+Sans+Bengali:wght@400;600&family=Noto+Sans+Tamil:wght@400;600&family=Noto+Sans+Telugu:wght@400;600&family=Noto+Sans+Sinhala:wght@400;600&family=Noto+Sans+Gurmukhi:wght@400;600&family=Noto+Sans+Ethiopic:wght@400;600&family=Noto+Sans+Kannada:wght@400;600&family=Noto+Sans+Gujarati:wght@400;600&display=swap">
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
 <style>
@@ -42,6 +42,14 @@
     --f-mal: "Noto Sans Malayalam", var(--f-latin);
     --f-arab: "Noto Naskh Arabic", "Geeza Pro", Tahoma, var(--f-latin);
     --f-urdu: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", var(--f-arab);
+    --f-beng: "Noto Sans Bengali", var(--f-latin);
+    --f-taml: "Noto Sans Tamil", var(--f-latin);
+    --f-telu: "Noto Sans Telugu", var(--f-latin);
+    --f-sinh: "Noto Sans Sinhala", var(--f-latin);
+    --f-guru: "Noto Sans Gurmukhi", var(--f-latin);
+    --f-ethi: "Noto Sans Ethiopic", var(--f-latin);
+    --f-knda: "Noto Sans Kannada", var(--f-latin);
+    --f-gujr: "Noto Sans Gujarati", var(--f-latin);
     color-scheme: light dark;
   }
   /* dark tokens: explicit choice, or system preference when no choice was made */
@@ -85,7 +93,17 @@
   .lang-ml { font-family: var(--f-mal); }
   .lang-ar { font-family: var(--f-arab); }
   .lang-ur { font-family: var(--f-urdu); }
-  .lang-en, .lang-tl { font-family: var(--f-latin); }
+  .lang-en, .lang-tl, .lang-sw, .lang-id { font-family: var(--f-latin); }
+  .lang-ne, .lang-mr { font-family: var(--f-deva); }
+  .lang-ps, .lang-fa { font-family: var(--f-arab); }
+  .lang-bn { font-family: var(--f-beng); }
+  .lang-ta { font-family: var(--f-taml); }
+  .lang-te { font-family: var(--f-telu); }
+  .lang-si { font-family: var(--f-sinh); }
+  .lang-pa { font-family: var(--f-guru); }
+  .lang-am { font-family: var(--f-ethi); }
+  .lang-kn { font-family: var(--f-knda); }
+  .lang-gu { font-family: var(--f-gujr); }
 
   /* press feedback lands on pointer-down */
   .press { transition: transform 120ms var(--ease), background-color 160ms, opacity 160ms; }
@@ -117,7 +135,14 @@
   .langs::-webkit-scrollbar { display: none; }
   .chip { flex: none; scroll-snap-align: start; min-height: 44px; padding: 0 18px; border-radius: var(--r-pill); background: var(--surface); color: var(--ink); font-size: 1rem; font-weight: 500; box-shadow: inset 0 0 0 1px var(--hair); }
   .chip[aria-pressed="true"] { background: var(--primary); color: var(--on-primary); box-shadow: none; }
-  .chip .ur { font-family: var(--f-urdu); font-size: .95rem; }
+  .chip .lang-ur { font-size: .95rem; }
+  .chip.more { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
+  .lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
+  .lang-opt { min-height: 56px; padding: 8px 14px; border-radius: var(--r-md); background: var(--surface-2); text-align: left; display: flex; flex-direction: column; justify-content: center; }
+  .lang-opt[aria-pressed="true"] { background: var(--primary); color: var(--on-primary); }
+  .lang-opt .n { font-size: 1.0625rem; font-weight: 600; line-height: 1.4; }
+  .lang-opt .e { font-size: .8125rem; opacity: .7; }
+  @media (min-width: 560px) { .lang-grid { grid-template-columns: repeat(3, 1fr); } }
   .chip .ar { font-family: var(--f-arab); }
   .chip .hi { font-family: var(--f-deva); }
   .chip .ml { font-family: var(--f-mal); }
@@ -153,6 +178,22 @@
   .row-title { font-weight: 600; display: block; }
   .row-sub { color: var(--ink-2); font-size: .875rem; display: block; }
   .row .chev { color: var(--ink-3); font-size: 18px; }
+
+  /* ---------- voice chat ---------- */
+  .chat-toggle { min-height: 44px; padding: 0 18px; border-radius: var(--r-pill); display: inline-flex; align-items: center; gap: 8px; font-size: .9375rem; font-weight: 600; background: var(--surface); color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--hair); }
+  .chat-toggle .ph { font-size: 20px; }
+  .chat-toggle[aria-pressed="true"] { background: var(--primary); color: var(--on-primary); box-shadow: none; }
+  .mic-hint.live { color: var(--ink); font-weight: 500; max-width: 32ch; }
+  .history { display: flex; flex-direction: column; gap: 10px; }
+  .history-head { display: flex; align-items: center; justify-content: space-between; color: var(--ink-3); font-size: .8125rem; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+  .history-head .btn { min-height: 36px; padding: 0 14px; font-size: .8125rem; text-transform: none; letter-spacing: 0; }
+  #history { display: flex; flex-direction: column; gap: 8px; }
+  .h-q { align-self: flex-end; max-width: 85%; background: var(--primary); color: var(--on-primary); border-radius: 18px 18px 6px 18px; padding: 8px 14px; font-size: .9375rem; white-space: pre-wrap; word-break: break-word; max-height: 4.6em; overflow: hidden; }
+  .h-a { align-self: flex-start; max-width: 90%; background: var(--surface); border-radius: 18px 18px 18px 6px; padding: 10px 14px; font-size: 1rem; line-height: 1.6; box-shadow: inset 0 0 0 1px var(--hair); white-space: pre-wrap; word-break: break-word; }
+  .h-a .tag { display: inline-block; margin-bottom: 4px; font: 600 .75rem/1 var(--f-latin); padding: 4px 8px; border-radius: var(--r-pill); }
+  .h-a .tag.red { background: var(--red-tint); color: var(--red-ink); }
+  .h-a .tag.amber { background: var(--amber-tint); color: var(--amber-ink); }
+  .h-a .tag.green { background: var(--green-tint); color: var(--green-ink); }
 
   /* ---------- downloadable samples ---------- */
   .samples { margin-top: 16px; padding: 16px; border-radius: var(--r-lg); box-shadow: inset 0 0 0 1px var(--hair); }
@@ -346,6 +387,7 @@
       <button class="mic" id="mic" type="button" data-lock aria-label="Speak your question"><i class="ph-fill ph-microphone" id="micIcon"></i></button>
     </div>
     <div class="mic-hint" id="micHint">Tap and speak your question</div>
+    <button class="chat-toggle press" id="chatToggle" type="button" aria-pressed="false"><i class="ph ph-chats-circle"></i><span id="chatToggleText">Voice chat: off</span></button>
   </section>
 
   <form class="composer" id="askForm">
@@ -408,6 +450,10 @@
   </section>
 
   <section class="thread" id="thread" aria-live="polite">
+    <div id="historyWrap" class="history hidden">
+      <div class="history-head"><span>Conversation</span><button class="btn secondary press" id="newChat" type="button"><i class="ph ph-note-pencil"></i><span>New chat</span></button></div>
+      <div id="history"></div>
+    </div>
     <div id="youCard" class="you hidden"></div>
     <div id="loading" class="card loading hidden" role="status">
       <div class="loading-head"><span class="activity" aria-hidden="true"></span><span id="loadingText">Gemma is reading…</span><span id="loadingNative"></span></div>
@@ -458,6 +504,15 @@
   </div>
 </div>
 
+<div class="sheet-root" id="langSheet" aria-hidden="true">
+  <div class="scrim" data-close></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="langTitle">
+    <div class="grabber"></div>
+    <div class="sheet-head"><h2 id="langTitle">Choose your language</h2><button class="icon-btn press" type="button" data-close aria-label="Close"><i class="ph ph-x"></i></button></div>
+    <div class="lang-grid" id="langGrid"></div>
+  </div>
+</div>
+
 <div class="sheet-root" id="qrSheet" aria-hidden="true">
   <div class="scrim" data-close></div>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="qrTitle">
@@ -498,6 +553,48 @@
     ar: { name: 'Arabic', native: 'العربية', sr: 'ar-AE', tts: ['ar'], script: 'Arabic', rtl: true,
           h1: 'اعرف حقوقك', ph: 'اكتب سؤالك', hint: 'اضغط وتكلّم',
           risk: { red: 'مخالفة لقانون العمل', amber: 'راجع بعناية', green: 'يبدو سليماً' } },
+    bn: { name: 'Bengali', native: 'বাংলা', sr: 'bn-BD', tts: ['bn'], script: 'Bengali', rtl: false,
+          h1: 'আপনার অধিকার জানুন', ph: 'আপনার প্রশ্ন লিখুন', hint: 'বোতাম টিপে বলুন',
+          risk: { red: 'নিয়ম ভাঙা হচ্ছে', amber: 'ভালো করে দেখুন', green: 'ঠিক আছে বলে মনে হচ্ছে' } },
+    ne: { name: 'Nepali', native: 'नेपाली', sr: 'ne-NP', tts: ['ne'], script: 'Devanagari', rtl: false,
+          h1: 'आफ्नो अधिकार जान्नुहोस्', ph: 'आफ्नो प्रश्न लेख्नुहोस्', hint: 'बटन थिचेर बोल्नुहोस्',
+          risk: { red: 'नियम तोडिँदैछ', amber: 'राम्ररी जाँच गर्नुहोस्', green: 'ठीक देखिन्छ' } },
+    ta: { name: 'Tamil', native: 'தமிழ்', sr: 'ta-IN', tts: ['ta'], script: 'Tamil', rtl: false,
+          h1: 'உங்கள் உரிமைகளை அறியுங்கள்', ph: 'உங்கள் கேள்வியை எழுதுங்கள்', hint: 'பொத்தானை அழுத்திப் பேசுங்கள்',
+          risk: { red: 'விதிகள் மீறப்படுகின்றன', amber: 'கவனமாகச் சரிபாருங்கள்', green: 'சரியாகத் தெரிகிறது' } },
+    te: { name: 'Telugu', native: 'తెలుగు', sr: 'te-IN', tts: ['te'], script: 'Telugu', rtl: false,
+          h1: 'మీ హక్కులు తెలుసుకోండి', ph: 'మీ ప్రశ్న రాయండి', hint: 'బటన్ నొక్కి మాట్లాడండి',
+          risk: { red: 'నియమాలు ఉల్లంఘించబడుతున్నాయి', amber: 'జాగ్రత్తగా పరిశీలించండి', green: 'సరిగ్గా ఉన్నట్లు ఉంది' } },
+    si: { name: 'Sinhala', native: 'සිංහල', sr: 'si-LK', tts: ['si'], script: 'Sinhala', rtl: false,
+          h1: 'ඔබේ අයිතිවාසිකම් දැනගන්න', ph: 'ඔබේ ප්‍රශ්නය ලියන්න', hint: 'බොත්තම ඔබා කතා කරන්න',
+          risk: { red: 'නීති කඩ වෙමින් පවතී', amber: 'හොඳින් පරීක්ෂා කරන්න', green: 'හරි ලෙස පෙනේ' } },
+    pa: { name: 'Punjabi', native: 'ਪੰਜਾਬੀ', sr: 'pa-IN', tts: ['pa'], script: 'Gurmukhi', rtl: false,
+          h1: 'ਆਪਣੇ ਹੱਕ ਜਾਣੋ', ph: 'ਆਪਣਾ ਸਵਾਲ ਲਿਖੋ', hint: 'ਬਟਨ ਦਬਾਓ ਅਤੇ ਬੋਲੋ',
+          risk: { red: 'ਨਿਯਮ ਤੋੜੇ ਜਾ ਰਹੇ ਹਨ', amber: 'ਧਿਆਨ ਨਾਲ ਜਾਂਚੋ', green: 'ਠੀਕ ਲੱਗਦਾ ਹੈ' } },
+    ps: { name: 'Pashto', native: 'پښتو', sr: 'ps-AF', tts: ['ps'], script: 'Pashto (Perso-Arabic)', rtl: true,
+          h1: 'خپل حقونه وپیژنئ', ph: 'خپله پوښتنه ولیکئ', hint: 'تڼۍ کېکاږئ او خبرې وکړئ',
+          risk: { red: 'قانون ماتېږي', amber: 'په دقت سره یې وګورئ', green: 'سم ښکاري' } },
+    am: { name: 'Amharic', native: 'አማርኛ', sr: 'am-ET', tts: ['am'], script: 'Ethiopic (Ge’ez)', rtl: false,
+          h1: 'መብትዎን ይወቁ', ph: 'ጥያቄዎን ይጻፉ', hint: 'ቁልፉን ተጭነው ይናገሩ',
+          risk: { red: 'ሕግ እየተጣሰ ነው', amber: 'በጥንቃቄ ይመልከቱ', green: 'ትክክል ይመስላል' } },
+    sw: { name: 'Swahili', native: 'Kiswahili', sr: 'sw-KE', tts: ['sw'], script: 'Latin', rtl: false,
+          h1: 'Jua haki zako', ph: 'Andika swali lako', hint: 'Bonyeza na uzungumze',
+          risk: { red: 'Sheria zinavunjwa', amber: 'Kagua kwa makini', green: 'Inaonekana sawa' } },
+    id: { name: 'Indonesian', native: 'Bahasa Indonesia', sr: 'id-ID', tts: ['id', 'in'], script: 'Latin', rtl: false,
+          h1: 'Ketahui hak Anda', ph: 'Tulis pertanyaan Anda', hint: 'Tekan dan bicara',
+          risk: { red: 'Ada aturan yang dilanggar', amber: 'Periksa dengan teliti', green: 'Tampak baik' } },
+    kn: { name: 'Kannada', native: 'ಕನ್ನಡ', sr: 'kn-IN', tts: ['kn'], script: 'Kannada', rtl: false,
+          h1: 'ನಿಮ್ಮ ಹಕ್ಕುಗಳನ್ನು ತಿಳಿಯಿರಿ', ph: 'ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಬರೆಯಿರಿ', hint: 'ಬಟನ್ ಒತ್ತಿ ಮಾತನಾಡಿ',
+          risk: { red: 'ನಿಯಮಗಳನ್ನು ಉಲ್ಲಂಘಿಸಲಾಗುತ್ತಿದೆ', amber: 'ಎಚ್ಚರಿಕೆಯಿಂದ ಪರಿಶೀಲಿಸಿ', green: 'ಸರಿಯಾಗಿದೆ ಎನಿಸುತ್ತದೆ' } },
+    mr: { name: 'Marathi', native: 'मराठी', sr: 'mr-IN', tts: ['mr'], script: 'Devanagari', rtl: false,
+          h1: 'तुमचे हक्क जाणून घ्या', ph: 'तुमचा प्रश्न लिहा', hint: 'बटण दाबा आणि बोला',
+          risk: { red: 'नियम मोडले जात आहेत', amber: 'काळजीपूर्वक तपासा', green: 'ठीक दिसते' } },
+    gu: { name: 'Gujarati', native: 'ગુજરાતી', sr: 'gu-IN', tts: ['gu'], script: 'Gujarati', rtl: false,
+          h1: 'તમારા હક જાણો', ph: 'તમારો પ્રશ્ન લખો', hint: 'બટન દબાવો અને બોલો',
+          risk: { red: 'નિયમો તોડવામાં આવે છે', amber: 'ધ્યાનથી તપાસો', green: 'બરાબર લાગે છે' } },
+    fa: { name: 'Persian', native: 'فارسی', sr: 'fa-IR', tts: ['fa'], script: 'Persian (Perso-Arabic)', rtl: true,
+          h1: 'حقوق خود را بشناسید', ph: 'سؤال خود را بنویسید', hint: 'دکمه را بزنید و صحبت کنید',
+          risk: { red: 'قانون نقض می‌شود', amber: 'با دقت بررسی کنید', green: 'درست به نظر می‌رسد' } },
     en: { name: 'English', native: 'English', sr: 'en-IN', tts: ['en'], script: 'Latin', rtl: false,
           h1: 'Know your rights', ph: 'Type your question', hint: 'Tap and speak your question',
           risk: { red: 'Rules are being broken', amber: 'Check this carefully', green: 'This looks fine' } },
@@ -509,10 +606,31 @@
     ml: { asked: 'നിങ്ങൾ ചോദിച്ചത്', said: 'നിങ്ങൾ പറഞ്ഞത്', doc: 'നിങ്ങളുടെ രേഖ', reading: 'വായിക്കുന്നു…', listen: 'കേൾക്കുക', stop: 'നിർത്തുക', share: 'കുടുംബത്തിന് അയയ്ക്കുക', mohre: 'ഇതിനെക്കുറിച്ച് MOHRE-നോട് സംസാരിക്കുക' },
     tl: { asked: 'Tanong mo', said: 'Sinabi mo', doc: 'Ang dokumento mo', reading: 'Binabasa…', listen: 'Pakinggan', stop: 'Itigil', share: 'Ibahagi sa pamilya', mohre: 'Kausapin ang MOHRE tungkol dito' },
     ar: { asked: 'سؤالك', said: 'قلت', doc: 'مستندك', reading: 'يقرأ…', listen: 'استمع', stop: 'إيقاف', share: 'شارك مع العائلة', mohre: 'تحدث مع وزارة الموارد البشرية بشأن هذا' },
+    bn: { asked: 'আপনি জিজ্ঞেস করেছেন', said: 'আপনি বলেছেন', doc: 'আপনার কাগজ', reading: 'পড়ছে…', listen: 'শুনুন', stop: 'থামুন', share: 'পরিবারকে পাঠান', mohre: 'এ বিষয়ে MOHRE-এর সাথে কথা বলুন' },
+    ne: { asked: 'तपाईंले सोध्नुभयो', said: 'तपाईंले भन्नुभयो', doc: 'तपाईंको कागजात', reading: 'पढ्दैछ…', listen: 'सुन्नुहोस्', stop: 'रोक्नुहोस्', share: 'परिवारलाई पठाउनुहोस्', mohre: 'यस बारे MOHRE सँग कुरा गर्नुहोस्' },
+    ta: { asked: 'நீங்கள் கேட்டது', said: 'நீங்கள் சொன்னது', doc: 'உங்கள் ஆவணம்', reading: 'படிக்கிறது…', listen: 'கேளுங்கள்', stop: 'நிறுத்து', share: 'குடும்பத்துடன் பகிருங்கள்', mohre: 'இதைப் பற்றி MOHRE-இடம் பேசுங்கள்' },
+    te: { asked: 'మీరు అడిగింది', said: 'మీరు చెప్పింది', doc: 'మీ పత్రం', reading: 'చదువుతోంది…', listen: 'వినండి', stop: 'ఆపండి', share: 'కుటుంబంతో పంచుకోండి', mohre: 'దీని గురించి MOHRE తో మాట్లాడండి' },
+    si: { asked: 'ඔබ ඇසුවේ', said: 'ඔබ කීවේ', doc: 'ඔබේ ලේඛනය', reading: 'කියවමින්…', listen: 'අහන්න', stop: 'නවත්වන්න', share: 'පවුලට යවන්න', mohre: 'මේ ගැන MOHRE සමඟ කතා කරන්න' },
+    pa: { asked: 'ਤੁਸੀਂ ਪੁੱਛਿਆ', said: 'ਤੁਸੀਂ ਕਿਹਾ', doc: 'ਤੁਹਾਡਾ ਦਸਤਾਵੇਜ਼', reading: 'ਪੜ੍ਹ ਰਿਹਾ ਹੈ…', listen: 'ਸੁਣੋ', stop: 'ਰੋਕੋ', share: 'ਪਰਿਵਾਰ ਨੂੰ ਭੇਜੋ', mohre: 'ਇਸ ਬਾਰੇ MOHRE ਨਾਲ ਗੱਲ ਕਰੋ' },
+    ps: { asked: 'تاسو وپوښتل', said: 'تاسو وویل', doc: 'ستاسو سند', reading: 'لولي…', listen: 'واورئ', stop: 'ودروئ', share: 'کورنۍ ته یې ولېږئ', mohre: 'د دې په اړه له MOHRE سره خبرې وکړئ' },
+    am: { asked: 'የጠየቁት', said: 'ያሉት', doc: 'ሰነድዎ', reading: 'እያነበበ ነው…', listen: 'ያዳምጡ', stop: 'አቁም', share: 'ለቤተሰብ ያጋሩ', mohre: 'ስለዚህ ጉዳይ MOHREን ያነጋግሩ' },
+    sw: { asked: 'Uliuliza', said: 'Ulisema', doc: 'Hati yako', reading: 'Inasoma…', listen: 'Sikiliza', stop: 'Simamisha', share: 'Shiriki na familia', mohre: 'Zungumza na MOHRE kuhusu hili' },
+    id: { asked: 'Anda bertanya', said: 'Anda berkata', doc: 'Dokumen Anda', reading: 'Membaca…', listen: 'Dengarkan', stop: 'Berhenti', share: 'Bagikan ke keluarga', mohre: 'Bicarakan dengan MOHRE tentang ini' },
+    kn: { asked: 'ನೀವು ಕೇಳಿದ್ದು', said: 'ನೀವು ಹೇಳಿದ್ದು', doc: 'ನಿಮ್ಮ ದಾಖಲೆ', reading: 'ಓದುತ್ತಿದೆ…', listen: 'ಕೇಳಿ', stop: 'ನಿಲ್ಲಿಸಿ', share: 'ಕುಟುಂಬದೊಂದಿಗೆ ಹಂಚಿಕೊಳ್ಳಿ', mohre: 'ಇದರ ಬಗ್ಗೆ MOHRE ಜೊತೆ ಮಾತನಾಡಿ' },
+    mr: { asked: 'तुम्ही विचारले', said: 'तुम्ही म्हणालात', doc: 'तुमचा दस्तऐवज', reading: 'वाचत आहे…', listen: 'ऐका', stop: 'थांबवा', share: 'कुटुंबाला पाठवा', mohre: 'याबद्दल MOHRE शी बोला' },
+    gu: { asked: 'તમે પૂછ્યું', said: 'તમે કહ્યું', doc: 'તમારો દસ્તાવેજ', reading: 'વાંચી રહ્યું છે…', listen: 'સાંભળો', stop: 'રોકો', share: 'પરિવારને મોકલો', mohre: 'આ વિશે MOHRE સાથે વાત કરો' },
+    fa: { asked: 'پرسیدید', said: 'گفتید', doc: 'سند شما', reading: 'در حال خواندن…', listen: 'گوش دهید', stop: 'توقف', share: 'با خانواده به اشتراک بگذارید', mohre: 'در این باره با MOHRE صحبت کنید' },
     en: { asked: 'You asked', said: 'You said', doc: 'Your document', reading: '', listen: 'Listen', stop: 'Stop', share: 'Share with family', mohre: 'Talk to MOHRE about this' },
   };
   // used to check that a reply really is in the chosen script
-  const SCRIPT_RE = { hi: /[ऀ-ॿ]/, ur: /[؀-ۿ]/, ar: /[؀-ۿ]/, ml: /[ഀ-ൿ]/ };
+  const DEVA = /[ऀ-ॿ]/, ARAB = /[؀-ۿ]/;
+  const SCRIPT_RE = {
+    hi: DEVA, ne: DEVA, mr: DEVA, ur: ARAB, ar: ARAB, ps: ARAB, fa: ARAB,
+    ml: /[ഀ-ൿ]/, bn: /[ঀ-৿]/, ta: /[஀-௿]/, te: /[ఀ-౿]/,
+    si: /[඀-෿]/, pa: /[਀-੿]/, am: /[ሀ-፿]/, kn: /[ಀ-೿]/, gu: /[઀-૿]/,
+  };
+  // the chips row shows these; the rest live behind "More"
+  const FEATURED = ['hi', 'ur', 'ml', 'tl', 'ar', 'en'];
   const RISK_EN = { red: 'High risk', amber: 'Needs a closer look', green: 'Looks OK' };
   const RISK_ICON = { red: 'ph-warning-octagon', amber: 'ph-warning', green: 'ph-check' };
   const ISSUE_ICON = { red: 'ph-x-circle', amber: 'ph-warning-circle', green: 'ph-check-circle' };
@@ -564,13 +682,19 @@ Note: July 2026 salary is pending and will be paid later.`;
 
   // ---------- language ----------
   function renderChips() {
-    $('chips').innerHTML = Object.entries(LANGS).map(([code, L]) =>
-      `<button class="chip press" type="button" data-lock data-lang="${code}" aria-pressed="${code === lang}"><span class="${code}">${L.native}</span></button>`
+    const shown = FEATURED.includes(lang) ? FEATURED : [lang, ...FEATURED];
+    const more = Object.keys(LANGS).length - shown.length;
+    $('chips').innerHTML = shown.map((code) =>
+      `<button class="chip press" type="button" data-lock data-lang="${code}" aria-pressed="${code === lang}"><span class="lang-${code}">${LANGS[code].native}</span></button>`
+    ).join('') + `<button class="chip more press" type="button" data-lock data-more><i class="ph ph-translate"></i>+${more} more</button>`;
+    $('langGrid').innerHTML = Object.entries(LANGS).map(([code, L]) =>
+      `<button class="lang-opt press" type="button" data-lang="${code}" aria-pressed="${code === lang}"><span class="n lang-${code}">${L.native}</span><span class="e">${L.name}</span></button>`
     ).join('');
   }
   function setLang(code) {
     lang = code;
     store.set('haqq.lang', code);
+    renderChips();
     const L = LANGS[code];
     document.querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.lang === code)));
     const chip = document.querySelector(`.chip[data-lang="${code}"]`);
@@ -589,7 +713,15 @@ Note: July 2026 salary is pending and will be paid later.`;
   }
   $('chips').addEventListener('click', (e) => {
     const b = e.target.closest('.chip');
-    if (b && !busy) setLang(b.dataset.lang);
+    if (!b || busy) return;
+    if (b.dataset.more !== undefined) return openSheet('langSheet');
+    setLang(b.dataset.lang);
+  });
+  $('langGrid').addEventListener('click', (e) => {
+    const b = e.target.closest('.lang-opt');
+    if (!b || busy) return;
+    setLang(b.dataset.lang);
+    closeSheet($('langSheet'));
   });
 
   // ---------- UI state ----------
@@ -634,6 +766,7 @@ Note: July 2026 salary is pending and will be paid later.`;
     return `You are Haqq, a kind helper for migrant workers in the UAE. Many users have little schooling. Explain simply, like a trusted friend.
 
 LANGUAGE: The worker chose ${L.name}. Always reply in ${L.name}, written in ${L.script} script, even when the question or the document is in English, Arabic or any other language. Translate everything you explain into ${L.name}.
+If there are earlier turns in this conversation, use them as context and answer the latest message.
 
 UAE labour rules you may use. Do NOT invent any other laws, article numbers, amounts or deadlines:
 1. The employer must not keep the worker's passport.
@@ -664,11 +797,11 @@ Remember: "answer" and every "issues_native" item must be in ${L.name} (${L.scri
     constructor(kind, message, detail) { super(message); this.kind = kind; this.detail = detail || ''; }
   }
 
-  async function callGemma(parts) {
+  async function callGemma(contents) {
     const key = store.get('haqq.key');
     const model = MODELS.includes(store.get('haqq.model')) ? store.get('haqq.model') : MODELS[0];
     const payload = {
-      contents: [{ role: 'user', parts }],
+      contents,
       generationConfig: GEN_CONFIG,
     };
     const url = key
@@ -755,10 +888,10 @@ Remember: "answer" and every "issues_native" item must be in ${L.name} (${L.scri
     n.className = `lang-${lang}`;
   }
   // brief overloads, timeouts and empty replies retry by themselves instead of needing Try again
-  async function callWithRetry(parts) {
+  async function callWithRetry(contents) {
     for (let attempt = 1; ; attempt++) {
       try {
-        return await callGemma(parts);
+        return await callGemma(contents);
       } catch (err) {
         if (!(err instanceof HaqqError) || !RETRYABLE.has(err.kind) || attempt >= MAX_ATTEMPTS) throw err;
         console.warn(`[Haqq] attempt ${attempt} failed (${err.kind}), retrying:`, err.detail);
@@ -770,10 +903,36 @@ Remember: "answer" and every "issues_native" item must be in ${L.name} (${L.scri
   const inScript = (code, s) => !SCRIPT_RE[code] || SCRIPT_RE[code].test(s || '');
   const wrongLanguage = (r, code) => !inScript(code, r.answer) || r.issues_native.some((s) => !inScript(code, s));
 
+  // ---------- conversation memory ----------
+  const MEMORY_TURNS = 4;
+  const turns = []; // finished turns, oldest first
+  let currentTurn = null;
+  function archiveTurn() {
+    if (!currentTurn) return;
+    turns.push(currentTurn);
+    currentTurn = null;
+    renderHistory();
+  }
+  function renderHistory() {
+    $('historyWrap').classList.toggle('hidden', !turns.length);
+    $('history').innerHTML = turns.map((t) => {
+      const dir = LANGS[t.lang].rtl ? 'rtl' : 'ltr';
+      const tag = t.risk !== 'none' ? `<span class="tag ${t.risk}">${RISK_EN[t.risk]}</span>\n` : '';
+      return `<div class="h-q" dir="auto">${esc(t.q)}</div><div class="h-a lang-${t.lang}" dir="${dir}">${tag}${esc(t.a)}</div>`;
+    }).join('');
+  }
+  // earlier turns go to Gemma as a real multi-turn conversation so follow-ups make sense
+  const memoryContents = () => turns.slice(-MEMORY_TURNS).flatMap((t) => [
+    { role: 'user', parts: [{ text: t.qModel }] },
+    { role: 'model', parts: [{ text: t.modelText }] },
+  ]);
+  $('newChat').onclick = () => { turns.length = 0; currentTurn = null; renderHistory(); toast('Started a new chat'); };
+
   async function ask(req) {
     if (busy) return;
     lastRequest = req;
     stopSpeaking();
+    archiveTurn();
     $('emptyState').classList.add('hidden');
     showYou(req);
     setBusy(true);
@@ -784,14 +943,15 @@ Remember: "answer" and every "issues_native" item must be in ${L.name} (${L.scri
     const pages = req.images || [];
     const prompt = buildPrompt(req.question || req.text, pages.length);
     const parts = [{ text: prompt }, ...pages.map((data) => ({ inline_data: { mime_type: 'image/jpeg', data } }))];
+    const contents = [...memoryContents(), { role: 'user', parts }];
     try {
-      let text = await callWithRetry(parts);
+      let text = await callWithRetry(contents);
       let result = parseReply(text);
       let tries = 1;
       if (!result) {
         console.warn('[Haqq] Malformed JSON, retrying once. Raw:', text);
         parts[0] = { text: prompt + '\n\nIMPORTANT: Your previous reply was not valid JSON. Return valid JSON only: exactly one JSON object, no markdown, no extra text.' };
-        text = await callWithRetry(parts);
+        text = await callWithRetry(contents);
         result = parseReply(text) || fallbackReply(text);
         tries++;
       }
@@ -799,7 +959,7 @@ Remember: "answer" and every "issues_native" item must be in ${L.name} (${L.scri
         console.warn(`[Haqq] Reply not in ${L.name}, asking once more`);
         parts[0] = { text: prompt + `\n\nIMPORTANT: Your previous reply was not written in ${L.name}. Write "answer" and every "issues_native" item in ${L.name}, using ${L.script} script only. Return valid JSON only.` };
         try {
-          const fixed = parseReply(await callWithRetry(parts));
+          const fixed = parseReply(await callWithRetry(contents));
           if (fixed && !wrongLanguage(fixed, code)) result = fixed;
         } catch { /* keep the first answer rather than failing */ }
         tries++;
@@ -808,9 +968,21 @@ Remember: "answer" and every "issues_native" item must be in ${L.name} (${L.scri
       result.ms = Math.round(performance.now() - t0);
       result.tries = tries;
       lastResult = result;
+      currentTurn = {
+        q: req.text || '',
+        qModel: (pages.length ? '[The worker shared a photo of a document.] ' : '') + String(req.question || req.text || '').slice(0, 1500),
+        a: result.answer, risk: result.risk, lang: code,
+        modelText: JSON.stringify({ risk: result.risk, issues_en: result.issues_en, issues_native: result.issues_native, answer: result.answer }),
+      };
       setBusy(false);
       renderResult(result);
-      speak(result.answer, result.lang);
+      const spoken = speak(result.answer, result.lang);
+      // voice chat: once the answer has been spoken, listen for the next question
+      if (req.viaVoice && chatMode) {
+        spoken.then((aloud) => setTimeout(() => {
+          if (chatMode && !busy && !listening && lastResult === result) startListening(true);
+        }, aloud ? 300 : 2500));
+      }
     } catch (err) {
       setBusy(false);
       showError(err instanceof HaqqError ? err : new HaqqError('server', 'Something went wrong.', String(err?.stack || err)));
@@ -907,22 +1079,29 @@ Remember: "answer" and every "issues_native" item must be in ${L.name} (${L.scri
       : `<i class="ph-fill ph-speaker-high"></i><span class="lang-${code}">${esc(ui.listen)}</span>`;
   }
   function stopSpeaking() { if (synth) synth.cancel(); setPlayUI(false); }
+  // resolves when speaking ends: true if it was spoken aloud, false if there was no voice
   async function speak(text, code) {
-    if (!synth) { $('voiceNotice').classList.remove('hidden'); return; }
+    if (!synth) { $('voiceNotice').classList.remove('hidden'); return false; }
     synth.cancel();
     await waitForVoices();
     const voice = findVoice(code);
-    if (!voice) { $('voiceNotice').classList.remove('hidden'); setPlayUI(false); return; }
+    if (!voice) { $('voiceNotice').classList.remove('hidden'); setPlayUI(false); return false; }
     // short chunks avoid Chrome cutting off long utterances
-    const chunks = text.match(/[^.!?।۔؟\n]+[.!?।۔؟]*/g) || [text];
+    const chunks = text.match(/[^.!?।۔؟።\n]+[.!?।۔؟።]*/g) || [text];
     const list = chunks.map((c) => c.trim()).filter(Boolean);
-    list.forEach((c, i) => {
-      const u = new SpeechSynthesisUtterance(c);
-      u.voice = voice; u.lang = voice.lang; u.rate = 0.95;
-      if (i === list.length - 1) { u.onend = () => setPlayUI(false); u.onerror = () => setPlayUI(false); }
-      synth.speak(u);
-    });
     setPlayUI(true);
+    await new Promise((resolve) => {
+      const done = () => { setPlayUI(false); resolve(); };
+      // some browsers never fire onend after cancel(), so don't wait forever
+      setTimeout(done, 5000 + text.length * 120);
+      list.forEach((c, i) => {
+        const u = new SpeechSynthesisUtterance(c);
+        u.voice = voice; u.lang = voice.lang; u.rate = 0.95;
+        if (i === list.length - 1) { u.onend = done; u.onerror = done; }
+        synth.speak(u);
+      });
+    });
+    return true;
   }
   // iOS only allows speech that starts from a tap: prime it on first interaction
   let primed = false;
@@ -947,11 +1126,20 @@ Remember: "answer" and every "issues_native" item must be in ${L.name} (${L.scri
     $('micIcon').className = on ? 'ph-fill ph-stop' : 'ph-fill ph-microphone';
     $('mic').setAttribute('aria-label', on ? 'Stop listening' : 'Speak your question');
     $('micHint').textContent = on ? 'Listening…' : LANGS[lang].hint;
+    $('micHint').className = `mic-hint lang-${lang}`;
   }
-  $('mic').onclick = () => {
-    if (busy) return;
-    if (!SR) { toast('Voice input is not supported in this browser. Please type your question.'); $('q').focus(); return; }
-    if (listening) { rec?.stop(); return; }
+  // live transcript under the mic, so the worker sees what Haqq heard
+  function showHeard(t) {
+    $('micHint').textContent = t || 'Listening…';
+    $('micHint').className = `mic-hint lang-${lang}${t ? ' live' : ''}`;
+    $('micHint').dir = 'auto';
+  }
+  function startListening(auto = false) {
+    if (busy || listening) return;
+    if (!SR) {
+      if (!auto) { toast('Voice input is not supported in this browser. Please type your question.'); $('q').focus(); }
+      return;
+    }
     stopSpeaking();
     rec = new SR();
     rec.lang = LANGS[lang].sr;
@@ -964,21 +1152,43 @@ Remember: "answer" and every "issues_native" item must be in ${L.name} (${L.scri
         const r = e.results[i];
         if (r.isFinal) finalText += r[0].transcript; else interim += r[0].transcript;
       }
-      $('q').value = (finalText + interim).trim();
+      const heard = (finalText + interim).trim();
+      $('q').value = heard;
+      showHeard(heard);
     };
     rec.onerror = (e) => {
       if (e.error === 'not-allowed' || e.error === 'service-not-allowed') toast('Microphone permission denied. Please allow the mic, or type.');
-      else if (e.error === 'no-speech') toast("Didn't hear anything. Tap the mic and try again.");
-      else if (e.error === 'language-not-supported') toast(`Voice input for ${LANGS[lang].name} isn't available here. Please type.`);
+      else if (e.error === 'no-speech') toast(auto ? 'Voice chat paused. Tap the mic to talk again.' : "Didn't hear anything. Tap the mic and try again.");
+      else if (e.error === 'language-not-supported') toast(`Voice input for ${LANGS[lang].name} isn't available in this browser. Please type.`);
       else if (e.error !== 'aborted') toast(`Mic error: ${e.error}`);
     };
     rec.onend = () => {
       setMicUI(false);
       const q = $('q').value.trim();
-      if (q) { $('q').value = ''; ask({ text: q, labelKey: 'said' }); }
+      if (q) { $('q').value = ''; ask({ text: q, labelKey: 'said', viaVoice: true }); }
     };
     try { rec.start(); setMicUI(true); } catch (err) { toast(`Mic error: ${err.message}`); }
+  }
+  $('mic').onclick = () => {
+    if (busy) return;
+    if (listening) { rec?.stop(); return; }
+    startListening();
   };
+
+  // ---------- voice chat mode ----------
+  let chatMode = store.get('haqq.chat') === '1';
+  function setChatUI() {
+    $('chatToggle').setAttribute('aria-pressed', String(chatMode));
+    $('chatToggleText').textContent = chatMode ? 'Voice chat: on' : 'Voice chat: off';
+  }
+  $('chatToggle').onclick = () => {
+    chatMode = !chatMode;
+    store.set('haqq.chat', chatMode ? '1' : '');
+    setChatUI();
+    toast(chatMode ? 'Voice chat on: after each answer, Haqq listens again.' : 'Voice chat off');
+    if (chatMode && !busy && !listening) startListening();
+  };
+  setChatUI();
 
   // ---------- typed input ----------
   $('askForm').addEventListener('submit', (e) => {
