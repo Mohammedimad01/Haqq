@@ -16,7 +16,9 @@ Millions of workers in the UAE sign contracts and receive payslips in a language
 - 🌍 **Real multilingual UX**: native-script answers (never romanized), automatic right-to-left layout for Urdu and Arabic, Noto fonts for Devanagari, Nastaliq, Naskh and Malayalam.
 - 📤 **Share with family**: Web Share API (falls back to copy to clipboard) with the answer plus the MOHRE number.
 - 🧪 **Two built-in samples**: a contract and a payslip with planted violations, for an instant demo.
-- 🛡️ **Demo-proof**: 25s timeout, one automatic retry on malformed JSON, raw-text fallback, friendly error card with a retry button.
+- 📄 **PDF support**: PDFs are rendered to page images in the browser (first 3 pages) and read like photos.
+- 📥 **Downloadable test documents** on the page and in [`/samples`](samples): an unfair offer letter (expect red) and a fair salary slip (expect green), as PDF and PNG. They are fictional.
+- 🛡️ **Demo-proof**: automatic retries when Gemma is busy or slow, one retry on malformed JSON, a re-ask if the reply is in the wrong script, a raw-text fallback, and a friendly error card with a retry button.
 - 📱 **Show QR** so anyone in the room can open the app on their phone.
 - 🔒 API key stays server-side (Vercel env var). No database, no accounts, nothing stored.
 
