@@ -11,6 +11,8 @@ Millions of workers in the UAE sign contracts and receive payslips in a language
 ## Features
 
 - 🎤 **Voice in, voice out**: Web Speech API mic input with a live transcript of what Haqq heard; answers spoken with the device's text-to-speech.
+- 🟢 **Chat assistant**: a messenger-style chat (floating Chat button) that answers general questions about the app and UAE work rights, in the chosen language, with suggested questions, typing indicator, read ticks, voice messages and tap-to-listen. It mirrors the WhatsApp bot below.
+- 📲 **WhatsApp bot, ready to connect**: `api/whatsapp.js` auto-replies to every WhatsApp message with Gemma 4, in the language the person writes in. Photos of contracts or payslips get a risk check. Dormant until the WhatsApp keys are set (see below).
 - 💬 **Voice chat mode**: hands-free conversation. After each spoken answer Haqq listens again, and the last 4 turns go to Gemma as context, so follow-ups like "so what should I do?" work. A conversation log and a New chat button sit above the answer.
 - 🗣️ **20 languages**: Hindi, Urdu, Malayalam, Tagalog, Arabic, English, Bengali, Nepali, Tamil, Telugu, Sinhala, Punjabi, Pashto, Amharic, Swahili, Indonesian, Kannada, Marathi, Gujarati and Persian. Six are one tap away; the rest are under "More". UI translations for the newer languages are best-effort and would benefit from native-speaker review. Voice input and output depend on what each browser and device supports.
 - 📷 **Scan a document**: photo is downscaled to 1600px JPEG in the browser and sent to Gemma 4 as an image.
@@ -49,6 +51,20 @@ flowchart LR
 - `index.html`: a single-file vanilla HTML/CSS/JS frontend. No framework, no build step.
 - `api/chat.js`: a serverless proxy to `generativelanguage.googleapis.com/v1beta/models/{model}:generateContent`. It allow-lists `gemma-4-26b-a4b-it` (default) and `gemma-4-31b-it`. `GET /api/chat` is a health check.
 - Gemma returns `{"risk":"red|amber|green|none","issues_en":[...],"issues_native":[...],"answer":"..."}`. The client strips code fences, drops `thought` parts, validates the result, retries once with "Return valid JSON only", and then falls back to plain text.
+
+## Connect the WhatsApp bot
+
+The webhook at `/api/whatsapp` implements Meta's WhatsApp Cloud API: it verifies the webhook, checks Meta's signature, replies to text messages, and reads photos of documents. It is stateless (no database), so each WhatsApp message is answered on its own.
+
+1. In [Meta for Developers](https://developers.facebook.com/), create an app of type **Business**, add the **WhatsApp** product and note the **Phone number ID**. Create a permanent access token (System User with `whatsapp_business_messaging`).
+2. In Vercel, add these environment variables, then redeploy:
+   - `WHATSAPP_VERIFY_TOKEN`: any secret string you choose
+   - `WHATSAPP_TOKEN`: the access token
+   - `WHATSAPP_PHONE_ID`: the phone number ID
+   - `WHATSAPP_APP_SECRET`: the app secret (App settings → Basic), used to verify signatures
+3. In the WhatsApp **Configuration** page, set the callback URL to `https://<your-app>.vercel.app/api/whatsapp`, enter the same verify token, and subscribe to the **messages** field.
+4. Check `https://<your-app>.vercel.app/api/whatsapp`: it should show `"configured": true`. Send a message to your WhatsApp number.
+5. Optional: put the number in `WHATSAPP_NUMBER` in `index.html` to show a WhatsApp button in the in-app chat.
 
 ## Run locally
 

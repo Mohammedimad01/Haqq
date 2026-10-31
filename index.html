@@ -21,16 +21,20 @@
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
 <style>
   :root {
-    --bg: #f5f5f7;
-    --surface: #ffffff;
-    --surface-2: #ececef;
-    --ink: #16171a;
-    --ink-2: #55585f;
-    --ink-3: #6e7178;
-    --hair: rgba(22, 23, 26, .08);
-    --primary: #16171a;
-    --on-primary: #fafafa;
-    --chrome: rgba(245, 245, 247, .72);
+    --bg: #f1f6f5;
+    --surface: #fdfefe;
+    --surface-2: #e5efed;
+    --ink: #0f1f1d;
+    --ink-2: #4a5b58;
+    --ink-3: #61716e;
+    --hair: rgba(15, 31, 29, .09);
+    /* brand: deep teal into navy, calm and trustworthy */
+    --primary: #0f766e;
+    --on-primary: #ffffff;
+    --brand-ink: #0b5952;
+    --brand-tint: #dcf1ed;
+    --brand-grad: linear-gradient(135deg, #0f766e 0%, #0e5e78 55%, #1e3a8a 100%);
+    --chrome: rgba(241, 246, 245, .78);
     --red: #d7263d;   --red-tint: #fdeef0;   --red-ink: #a3182c;
     --amber: #c27400; --amber-tint: #fff4e2; --amber-ink: #8a5300;
     --green: #1f8a4c; --green-tint: #e9f6ee; --green-ink: #166a3a;
@@ -54,9 +58,11 @@
   }
   /* dark tokens: explicit choice, or system preference when no choice was made */
   :root[data-theme="dark"] {
-    --bg: #0b0b0d; --surface: #17181b; --surface-2: #232428;
-    --ink: #f2f2f4; --ink-2: #a9abb2; --ink-3: #8b8e96; --hair: rgba(255, 255, 255, .09);
-    --primary: #f2f2f4; --on-primary: #121315; --chrome: rgba(11, 11, 13, .72);
+    --bg: #091214; --surface: #111c1e; --surface-2: #1a2729;
+    --ink: #eaf2f1; --ink-2: #a3b4b2; --ink-3: #8a9b99; --hair: rgba(255, 255, 255, .08);
+    --primary: #2bb3a3; --on-primary: #04211e; --chrome: rgba(9, 18, 20, .76);
+    --brand-ink: #7ddbcd; --brand-tint: #12302c;
+    --brand-grad: linear-gradient(135deg, #0d5f58 0%, #0c4a5e 55%, #1b2f6b 100%);
     --red: #ff5a6e; --red-tint: #2a1418; --red-ink: #ff8f9c;
     --amber: #ffb340; --amber-tint: #2a1f0e; --amber-ink: #ffc56b;
     --green: #3ccf7a; --green-tint: #102419; --green-ink: #6fe0a0;
@@ -65,9 +71,11 @@
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #0b0b0d; --surface: #17181b; --surface-2: #232428;
-      --ink: #f2f2f4; --ink-2: #a9abb2; --ink-3: #8b8e96; --hair: rgba(255, 255, 255, .09);
-      --primary: #f2f2f4; --on-primary: #121315; --chrome: rgba(11, 11, 13, .72);
+      --bg: #091214; --surface: #111c1e; --surface-2: #1a2729;
+      --ink: #eaf2f1; --ink-2: #a3b4b2; --ink-3: #8a9b99; --hair: rgba(255, 255, 255, .08);
+      --primary: #2bb3a3; --on-primary: #04211e; --chrome: rgba(9, 18, 20, .76);
+      --brand-ink: #7ddbcd; --brand-tint: #12302c;
+      --brand-grad: linear-gradient(135deg, #0d5f58 0%, #0c4a5e 55%, #1b2f6b 100%);
       --red: #ff5a6e; --red-tint: #2a1418; --red-ink: #ff8f9c;
       --amber: #ffb340; --amber-tint: #2a1f0e; --amber-ink: #ffc56b;
       --green: #3ccf7a; --green-tint: #102419; --green-ink: #6fe0a0;
@@ -83,7 +91,7 @@
   button, input, select, textarea { font: inherit; color: inherit; }
   button { cursor: pointer; border: 0; background: none; padding: 0; }
   button:disabled { cursor: not-allowed; opacity: .4; }
-  :focus-visible { outline: 3px solid color-mix(in srgb, var(--ink) 35%, transparent); outline-offset: 2px; }
+  :focus-visible { outline: 3px solid color-mix(in srgb, var(--primary) 55%, transparent); outline-offset: 2px; }
   .ph, .ph-fill { line-height: 1; }
   .hidden { display: none !important; }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -112,7 +120,7 @@
   /* ---------- chrome ---------- */
   .bar { position: sticky; top: 0; z-index: 20; background: var(--chrome); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); padding-top: env(safe-area-inset-top); }
   .bar-in { max-width: 560px; margin: 0 auto; height: 56px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; }
-  .brand { display: flex; align-items: baseline; gap: 8px; font-weight: 650; font-size: 1.125rem; letter-spacing: -.01em; }
+  .brand { display: flex; align-items: baseline; gap: 8px; font-weight: 700; font-size: 1.125rem; letter-spacing: -.01em; color: var(--brand-ink); }
   .brand .marks { font-weight: 500; color: var(--ink-3); font-size: 1rem; }
   .brand .a { font-family: var(--f-arab); }
   .brand .d { font-family: var(--f-deva); }
@@ -120,18 +128,21 @@
   .icon-btn { width: 44px; height: 44px; border-radius: var(--r-pill); display: inline-grid; place-items: center; font-size: 22px; color: var(--ink); }
   .icon-btn:hover { background: var(--hair); }
 
-  main { max-width: 560px; margin: 0 auto; padding: 8px 16px calc(40px + env(safe-area-inset-bottom)); }
+  main { max-width: 560px; margin: 0 auto; padding: 8px 16px calc(96px + env(safe-area-inset-bottom)); }
 
   /* ---------- hero ---------- */
-  .hero { padding: 20px 0 8px; }
+  .hero { margin-top: 8px; padding: 26px 20px 20px; border-radius: 28px; color: #fff; background: radial-gradient(circle at 88% 8%, rgba(255, 255, 255, .2), transparent 42%), var(--brand-grad); box-shadow: 0 18px 40px rgba(14, 94, 120, .25); }
   .hero h1 { margin: 0; font-size: clamp(2.125rem, 9vw, 2.75rem); line-height: 1.12; letter-spacing: -.025em; font-weight: 700; }
   .hero h1.lang-ur { line-height: 1.9; letter-spacing: 0; font-size: clamp(1.75rem, 7.5vw, 2.25rem); }
   .hero h1.lang-ar, .hero h1.lang-hi, .hero h1.lang-ml { letter-spacing: 0; line-height: 1.3; }
   .hero h1.lang-ml { font-size: clamp(1.625rem, 7vw, 2.125rem); }
-  .hero p { margin: 10px 0 0; color: var(--ink-2); font-size: 1.0625rem; max-width: 34ch; }
+  .hero p { margin: 10px 0 0; color: rgba(255, 255, 255, .86); font-size: 1.0625rem; max-width: 34ch; }
+  .hero .chip { background: rgba(255, 255, 255, .14); color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .24); }
+  .hero .chip[aria-pressed="true"] { background: #fff; color: #0b5952; box-shadow: 0 4px 14px rgba(0, 0, 0, .15); }
+  .hero .chip.more { color: rgba(255, 255, 255, .9); }
 
   /* language picker: one scrollable row */
-  .langs { display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x proximity; margin: 20px -16px 0; padding: 2px 16px 6px; scrollbar-width: none; }
+  .langs { display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x proximity; margin: 20px -20px 0; padding: 2px 20px 6px; scrollbar-width: none; }
   .langs::-webkit-scrollbar { display: none; }
   .chip { flex: none; scroll-snap-align: start; min-height: 44px; padding: 0 18px; border-radius: var(--r-pill); background: var(--surface); color: var(--ink); font-size: 1rem; font-weight: 500; box-shadow: inset 0 0 0 1px var(--hair); }
   .chip[aria-pressed="true"] { background: var(--primary); color: var(--on-primary); box-shadow: none; }
@@ -151,7 +162,7 @@
   .voice { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 36px 0 28px; }
   .mic-wrap { position: relative; width: 132px; height: 132px; display: grid; place-items: center; }
   .mic-wrap::before, .mic-wrap::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--red); opacity: 0; transform: scale(.9); pointer-events: none; }
-  .mic { position: relative; width: 112px; height: 112px; border-radius: 50%; background: var(--primary); color: var(--on-primary); font-size: 44px; display: grid; place-items: center; box-shadow: 0 10px 30px rgba(22, 23, 26, .18); transition: transform 160ms var(--ease), background-color 200ms; }
+  .mic { position: relative; width: 112px; height: 112px; border-radius: 50%; background: var(--primary); color: var(--on-primary); font-size: 44px; display: grid; place-items: center; box-shadow: 0 12px 32px rgba(15, 118, 110, .35); transition: transform 160ms var(--ease), background-color 200ms; }
   .mic:active:not(:disabled) { transform: scale(.94); }
   .mic.listening { background: var(--red); color: #fff; }
   .listening-ring::before { animation: ring 1.6s var(--ease) infinite; }
@@ -173,7 +184,7 @@
   .row + .row { box-shadow: inset 0 1px 0 var(--hair); }
   .row:hover:not(:disabled) { background: color-mix(in srgb, var(--ink) 3%, transparent); }
   .row:active:not(:disabled) { background: color-mix(in srgb, var(--ink) 7%, transparent); }
-  .row-icon { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 22px; background: var(--surface-2); color: var(--ink); }
+  .row-icon { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 22px; background: var(--brand-tint); color: var(--brand-ink); }
   .row-text { flex: 1; min-width: 0; }
   .row-title { font-weight: 600; display: block; }
   .row-sub { color: var(--ink-2); font-size: .875rem; display: block; }
@@ -194,6 +205,52 @@
   .h-a .tag.red { background: var(--red-tint); color: var(--red-ink); }
   .h-a .tag.amber { background: var(--amber-tint); color: var(--amber-ink); }
   .h-a .tag.green { background: var(--green-tint); color: var(--green-ink); }
+
+  /* ---------- chat assistant ---------- */
+  .fab { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 30; display: inline-flex; align-items: center; gap: 8px; min-height: 56px; padding: 0 22px 0 18px; border-radius: var(--r-pill); background: var(--primary); color: var(--on-primary); font-weight: 700; font-size: 1rem; box-shadow: 0 12px 30px rgba(15, 118, 110, .4); }
+  .fab .ph-fill { font-size: 26px; }
+  body.chat-open .fab { opacity: 0; pointer-events: none; }
+  .chat-root { position: fixed; inset: 0; z-index: 45; display: flex; align-items: flex-end; justify-content: flex-end; visibility: hidden; pointer-events: none; transition: visibility 0s .3s; }
+  .chat-root.open { visibility: visible; pointer-events: auto; transition: none; }
+  .chat { --wall: #e6efed; --me: #d3efe7; width: 100%; height: 100dvh; display: flex; flex-direction: column; background: radial-gradient(rgba(15, 118, 110, .09) 1px, transparent 1.4px) 0 0 / 18px 18px, var(--wall); opacity: 0; transform: translateY(24px); transition: opacity .28s var(--ease), transform .32s var(--ease); }
+  :root[data-theme="dark"] .chat { --wall: #0b1618; --me: #134a43; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .chat { --wall: #0b1618; --me: #134a43; } }
+  .chat-root.open .chat { opacity: 1; transform: none; }
+  .chat-head { display: flex; align-items: center; gap: 10px; padding: calc(8px + env(safe-area-inset-top)) 8px 8px; background: var(--brand-grad); color: #fff; }
+  .chat-head .icon-btn { color: #fff; }
+  .chat-head .icon-btn:hover { background: rgba(255, 255, 255, .14); }
+  .chat-avatar { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: #0b5952; font: 600 22px/1 var(--f-arab); }
+  .chat-who { flex: 1; min-width: 0; }
+  .chat-name { font-weight: 700; }
+  .chat-status { font-size: .8125rem; opacity: .9; display: flex; align-items: center; gap: 6px; }
+  .online { width: 8px; height: 8px; border-radius: 50%; background: #5eead4; }
+  .chat-body { flex: 1; overflow-y: auto; padding: 16px 12px 8px; display: flex; flex-direction: column; gap: 8px; }
+  .chat-note { align-self: center; max-width: 90%; text-align: center; font-size: .8125rem; color: var(--ink-2); background: color-mix(in srgb, var(--surface) 85%, transparent); border-radius: 10px; padding: 6px 12px; }
+  .msg { max-width: 82%; padding: 8px 10px 4px 12px; border-radius: 4px 16px 16px 16px; background: var(--surface); box-shadow: 0 1px 1px rgba(0, 0, 0, .06); animation: rise .3s var(--ease) both; }
+  .msg.user { align-self: flex-end; background: var(--me); border-radius: 16px 4px 16px 16px; }
+  .msg-text { white-space: pre-wrap; word-break: break-word; line-height: 1.55; font-size: 1rem; }
+  .msg-text.lang-ur { line-height: 2.1; }
+  .msg-meta { display: flex; align-items: center; justify-content: flex-end; gap: 6px; font-size: .6875rem; color: var(--ink-3); margin-top: 2px; }
+  .msg-meta .ph-checks { font-size: 14px; color: var(--primary); }
+  .msg-play { width: 32px; height: 32px; margin-right: auto; border-radius: 50%; display: grid; place-items: center; color: var(--primary); font-size: 16px; }
+  .chat-typing { display: flex; align-items: center; gap: 4px; padding: 0 16px 6px; color: var(--ink-3); font-size: .8125rem; }
+  .chat-typing span { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); animation: blink 1.2s infinite both; }
+  .chat-typing span:nth-child(2) { animation-delay: .15s; }
+  .chat-typing span:nth-child(3) { animation-delay: .3s; }
+  .chat-typing em { font-style: normal; margin-left: 6px; }
+  @keyframes blink { 0%, 80%, 100% { opacity: .25; transform: none; } 40% { opacity: 1; transform: translateY(-3px); } }
+  .chat-suggest { display: flex; gap: 8px; overflow-x: auto; padding: 4px 12px 8px; scrollbar-width: none; }
+  .chat-suggest::-webkit-scrollbar { display: none; }
+  .chat-suggest button { flex: none; min-height: 40px; padding: 0 14px; border-radius: var(--r-pill); background: var(--surface); color: var(--brand-ink); font-size: .875rem; font-weight: 600; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 35%, transparent); }
+  .chat-input { display: flex; align-items: center; gap: 8px; padding: 8px 10px calc(10px + env(safe-area-inset-bottom)); }
+  .chat-input input { flex: 1; min-width: 0; min-height: 48px; padding: 0 18px; border: 0; border-radius: var(--r-pill); background: var(--surface); outline: none; box-shadow: 0 1px 2px rgba(0, 0, 0, .06); }
+  .chat-btn { flex: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; font-size: 22px; background: var(--surface); color: var(--primary); box-shadow: 0 1px 2px rgba(0, 0, 0, .06); }
+  .chat-btn.send { background: var(--primary); color: var(--on-primary); }
+  .chat-btn.listening { background: var(--red); color: #fff; }
+  @media (min-width: 720px) {
+    .chat { width: 420px; height: min(700px, calc(100dvh - 32px)); margin: 0 16px 16px 0; border-radius: 24px; overflow: hidden; box-shadow: 0 24px 60px rgba(0, 0, 0, .28); }
+    .chat-head { padding-top: 10px; }
+  }
 
   /* ---------- downloadable samples ---------- */
   .samples { margin-top: 16px; padding: 16px; border-radius: var(--r-lg); box-shadow: inset 0 0 0 1px var(--hair); }
@@ -326,7 +383,7 @@
   .empty-head p { margin: 2px 0 0; color: var(--ink-2); }
   .rules { list-style: none; margin: 20px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
   .rules li { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border-radius: var(--r-md); background: var(--bg); }
-  .rules .ph { flex: none; font-size: 22px; margin-top: 1px; }
+  .rules .ph { flex: none; font-size: 22px; margin-top: 1px; color: var(--primary); }
   .rules strong { display: block; font-weight: 600; line-height: 1.35; }
   .rules span { display: block; color: var(--ink-2); font-size: .875rem; margin-top: 2px; }
   .empty-foot { margin: 18px 0 0; color: var(--ink-3); font-size: .875rem; display: flex; align-items: center; gap: 8px; }
@@ -520,6 +577,29 @@
     <div class="sheet-head"><h2 id="qrTitle">Open Haqq on your phone</h2><button class="icon-btn press" type="button" data-close aria-label="Close"><i class="ph ph-x"></i></button></div>
     <div id="qr"></div>
     <div class="url" id="qrUrl"></div>
+  </div>
+</div>
+
+<!-- chat assistant: a messenger-style UI built to mirror the WhatsApp bot in api/whatsapp.js -->
+<button class="fab press" id="chatFab" type="button" aria-label="Chat with Haqq"><i class="ph-fill ph-chat-circle-dots"></i><span>Chat</span></button>
+<div class="chat-root" id="chatRoot" aria-hidden="true">
+  <div class="chat" role="dialog" aria-modal="true" aria-labelledby="chatTitle">
+    <header class="chat-head">
+      <button class="icon-btn press" type="button" id="chatClose" aria-label="Close chat"><i class="ph ph-arrow-left"></i></button>
+      <div class="chat-avatar" aria-hidden="true">ح</div>
+      <div class="chat-who"><div class="chat-name" id="chatTitle">Haqq Assistant</div><div class="chat-status"><span class="online"></span>Online · replies in <span id="chatLang">English</span></div></div>
+      <a class="icon-btn press hidden" id="waLink" target="_blank" rel="noopener" aria-label="Continue on WhatsApp"><i class="ph ph-whatsapp-logo"></i></a>
+      <button class="icon-btn press" type="button" id="chatClear" aria-label="Clear chat"><i class="ph ph-trash"></i></button>
+    </header>
+    <div class="chat-body" id="chatBody" aria-live="polite"></div>
+    <div class="chat-typing hidden" id="chatTyping"><span></span><span></span><span></span><em>Haqq is typing…</em></div>
+    <div class="chat-suggest" id="chatSuggest"></div>
+    <form class="chat-input" id="chatForm">
+      <label class="sr-only" for="chatText">Message</label>
+      <input id="chatText" type="text" dir="auto" autocomplete="off" placeholder="Message">
+      <button class="chat-btn press" type="button" id="chatMic" aria-label="Speak a message"><i class="ph-fill ph-microphone"></i></button>
+      <button class="chat-btn send press" type="submit" id="chatSend" aria-label="Send"><i class="ph-fill ph-paper-plane-right"></i></button>
+    </form>
   </div>
 </div>
 
@@ -761,6 +841,12 @@ Note: July 2026 salary is pending and will be paid later.`;
   }
 
   // ---------- prompt ----------
+  const RULES_TEXT = `1. The employer must not keep the worker's passport.
+2. Maximum 8 working hours a day or 48 hours a week. Extra hours are overtime and must be paid extra.
+3. At least 1 paid rest day every week.
+4. Salary must be paid at least once a month, through WPS (bank or exchange transfer).
+5. End-of-service gratuity is due after 1 year of continuous service.
+6. The worker must not be charged recruitment fees, visa costs, or resignation/exit fees.`;
   function buildPrompt(question, pages) {
     const L = LANGS[lang];
     return `You are Haqq, a kind helper for migrant workers in the UAE. Many users have little schooling. Explain simply, like a trusted friend.
@@ -769,12 +855,7 @@ LANGUAGE: The worker chose ${L.name}. Always reply in ${L.name}, written in ${L.
 If there are earlier turns in this conversation, use them as context and answer the latest message.
 
 UAE labour rules you may use. Do NOT invent any other laws, article numbers, amounts or deadlines:
-1. The employer must not keep the worker's passport.
-2. Maximum 8 working hours a day or 48 hours a week. Extra hours are overtime and must be paid extra.
-3. At least 1 paid rest day every week.
-4. Salary must be paid at least once a month, through WPS (bank or exchange transfer).
-5. End-of-service gratuity is due after 1 year of continuous service.
-6. The worker must not be charged recruitment fees, visa costs, or resignation/exit fees.
+${RULES_TEXT}
 If something is not covered by these rules, say you are not sure and advise calling MOHRE ${MOHRE}.
 
 ${pages ? `The worker sent ${pages > 1 ? `${pages} pages of a document, in order` : 'a photo of a document'} (contract, payslip, notice or message). Read it carefully. If it is unreadable or not a work document, say so kindly and ask for a clearer photo.\n\n` : ''}Reply with ONLY one JSON object, no markdown, no code fences, no text before or after:
@@ -797,12 +878,12 @@ Remember: "answer" and every "issues_native" item must be in ${L.name} (${L.scri
     constructor(kind, message, detail) { super(message); this.kind = kind; this.detail = detail || ''; }
   }
 
-  async function callGemma(contents) {
+  async function callGemma(contents, config = GEN_CONFIG) {
     const key = store.get('haqq.key');
     const model = MODELS.includes(store.get('haqq.model')) ? store.get('haqq.model') : MODELS[0];
     const payload = {
       contents,
-      generationConfig: GEN_CONFIG,
+      generationConfig: config,
     };
     const url = key
       ? `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`
@@ -888,14 +969,14 @@ Remember: "answer" and every "issues_native" item must be in ${L.name} (${L.scri
     n.className = `lang-${lang}`;
   }
   // brief overloads, timeouts and empty replies retry by themselves instead of needing Try again
-  async function callWithRetry(contents) {
+  async function callWithRetry(contents, config, onRetry = setLoadingText) {
     for (let attempt = 1; ; attempt++) {
       try {
-        return await callGemma(contents);
+        return await callGemma(contents, config);
       } catch (err) {
         if (!(err instanceof HaqqError) || !RETRYABLE.has(err.kind) || attempt >= MAX_ATTEMPTS) throw err;
         console.warn(`[Haqq] attempt ${attempt} failed (${err.kind}), retrying:`, err.detail);
-        setLoadingText(attempt + 1);
+        onRetry(attempt + 1);
         await sleep(err.kind === 'rate' ? 4000 : 1500 * attempt);
       }
     }
@@ -1384,6 +1465,137 @@ Remember: "answer" and every "issues_native" item must be in ${L.name} (${L.scri
     .then((r) => (r.ok && (r.headers.get('content-type') || '').includes('json') ? r.json() : null))
     .then((d) => { serverHasKey = d ? Boolean(d.hasKey) : null; updateApiStatus(); })
     .catch(() => updateApiStatus());
+
+  // ---------- chat assistant (messenger-style, mirrors the WhatsApp bot) ----------
+  const WHATSAPP_NUMBER = ''; // international format without +, e.g. '9715XXXXXXXX', once the WhatsApp Business number is live
+  const CHAT_CONFIG = { temperature: 0.5, maxOutputTokens: 4096, thinkingConfig: { thinkingLevel: 'MINIMAL' } };
+  const CHAT_SUGGESTIONS = ['What can Haqq do?', 'Can my employer keep my passport?', 'How many hours can I work a day?', 'Do I have to pay recruitment fees?', 'How do I contact MOHRE?'];
+  const chatMsgs = []; // { role: 'user' | 'bot', text, local }
+  let chatBusy = false;
+
+  function chatPrompt(message) {
+    const L = LANGS[lang];
+    return `You are Haqq Assistant, a friendly chat assistant inside Haqq, a free app that helps migrant workers in the UAE understand their work rights.
+
+LANGUAGE: Reply in ${L.name}, written in ${L.script} script, even if the message is in another language.
+
+You can help with:
+- How to use Haqq: speak or type a question; scan a photo or PDF of a contract, payslip or notice to get a red, amber or green Risk Check; listen to answers aloud; share answers with family; voice chat mode; 20 languages; call MOHRE on ${MOHRE}.
+- Questions about work in the UAE, using ONLY these rules. Never invent other laws, numbers or deadlines:
+${RULES_TEXT}
+- Anything these rules don't cover: say you are not sure and suggest calling MOHRE on ${MOHRE}.
+If the message is unrelated to work, rights or this app, answer briefly and kindly, then steer back.
+
+Style: warm and simple, like a trusted friend. At most 5 short sentences. Plain text only: no markdown, no lists, no JSON. When you give rights information, end with a short reminder that this is not legal advice.
+
+Message:
+"""${message}"""`;
+  }
+
+  const timeNow = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  function addMsg(role, text, { code = lang, local = false } = {}) {
+    chatMsgs.push({ role, text, local });
+    const el = document.createElement('div');
+    el.className = `msg ${role}`;
+    const dir = role === 'bot' && LANGS[code].rtl ? 'rtl' : 'auto';
+    el.innerHTML = `<div class="msg-text${role === 'bot' ? ` lang-${code}` : ''}" dir="${dir}">${esc(text)}</div>
+      <div class="msg-meta">${role === 'bot' ? '<button class="msg-play press" type="button" aria-label="Listen"><i class="ph-fill ph-speaker-high"></i></button>' : ''}<span>${timeNow()}</span>${role === 'user' ? '<i class="ph ph-checks" aria-label="Sent"></i>' : ''}</div>`;
+    if (role === 'bot') el.querySelector('.msg-play').onclick = () => speak(text, code);
+    $('chatBody').appendChild(el);
+    $('chatBody').scrollTop = $('chatBody').scrollHeight;
+  }
+  function addNote(text) {
+    const el = document.createElement('div');
+    el.className = 'chat-note';
+    el.textContent = text;
+    $('chatBody').appendChild(el);
+  }
+  function chatWelcome() {
+    $('chatBody').innerHTML = '';
+    chatMsgs.length = 0;
+    addNote(WHATSAPP_NUMBER ? 'Haqq is also on WhatsApp: tap the WhatsApp icon above.' : 'Today · Coming soon on WhatsApp');
+    addMsg('bot', `Hi! I'm Haqq Assistant. Ask me anything about your work rights in the UAE, or how to use this app. I'll reply in ${LANGS[lang].name}.`, { code: 'en', local: true });
+    $('chatSuggest').innerHTML = CHAT_SUGGESTIONS.map((s) => `<button class="press" type="button">${esc(s)}</button>`).join('');
+    $('chatSuggest').classList.remove('hidden');
+  }
+  function setTyping(on) {
+    $('chatTyping').classList.toggle('hidden', !on);
+    $('chatBody').scrollTop = $('chatBody').scrollHeight;
+  }
+  async function sendChat(text, { viaVoice = false } = {}) {
+    text = text.trim();
+    if (!text || chatBusy) return;
+    chatBusy = true;
+    $('chatSend').disabled = true;
+    $('chatSuggest').classList.add('hidden');
+    // earlier messages go along as a real conversation (welcome and error notes stay local)
+    const history = chatMsgs.filter((m) => !m.local).slice(-8).map((m) => ({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: m.text }] }));
+    addMsg('user', text);
+    setTyping(true);
+    const code = lang;
+    try {
+      const raw = await callWithRetry([...history, { role: 'user', parts: [{ text: chatPrompt(text) }] }], CHAT_CONFIG, () => {});
+      const reply = raw.replace(/```[a-z]*|```/gi, '').replace(/\*\*|__/g, '').trim();
+      addMsg('bot', reply, { code });
+      if (viaVoice) speak(reply, code);
+    } catch (err) {
+      addMsg('bot', `Sorry, I couldn't answer just now. ${err.message || ''} Please try again.`, { code: 'en', local: true });
+    } finally {
+      setTyping(false);
+      chatBusy = false;
+      $('chatSend').disabled = false;
+    }
+  }
+  function openChat() {
+    $('chatLang').textContent = LANGS[lang].name;
+    $('chatText').placeholder = LANGS[lang].ph;
+    if (!chatMsgs.length) chatWelcome();
+    $('chatRoot').classList.add('open');
+    $('chatRoot').setAttribute('aria-hidden', 'false');
+    document.body.classList.add('chat-open');
+    if (matchMedia('(pointer: fine)').matches) setTimeout(() => $('chatText').focus(), 250);
+  }
+  function closeChat() {
+    $('chatRoot').classList.remove('open');
+    $('chatRoot').setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('chat-open');
+    $('chatFab').focus({ preventScroll: true });
+  }
+  $('chatFab').onclick = openChat;
+  $('chatClose').onclick = closeChat;
+  $('chatClear').onclick = chatWelcome;
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && $('chatRoot').classList.contains('open')) closeChat(); });
+  $('chatSuggest').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) sendChat(b.textContent); });
+  $('chatForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const t = $('chatText').value;
+    $('chatText').value = '';
+    sendChat(t);
+  });
+  if (WHATSAPP_NUMBER) {
+    $('waLink').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hi Haqq')}`;
+    $('waLink').classList.remove('hidden');
+  }
+  // one-shot voice message in the chat: words appear in the box, then send
+  let chatRec = null;
+  $('chatMic').onclick = () => {
+    if (chatRec) { chatRec.stop(); return; }
+    if (!SR) { toast('Voice input is not supported in this browser. Please type.'); return; }
+    stopSpeaking();
+    chatRec = new SR();
+    chatRec.lang = LANGS[lang].sr;
+    chatRec.interimResults = true;
+    chatRec.onresult = (e) => { $('chatText').value = Array.from(e.results).map((r) => r[0].transcript).join('').trim(); };
+    chatRec.onerror = (e) => { if (e.error !== 'aborted' && e.error !== 'no-speech') toast(`Mic error: ${e.error}`); };
+    chatRec.onend = () => {
+      chatRec = null;
+      $('chatMic').classList.remove('listening');
+      const t = $('chatText').value;
+      $('chatText').value = '';
+      sendChat(t, { viaVoice: true });
+    };
+    try { chatRec.start(); $('chatMic').classList.add('listening'); } catch (err) { chatRec = null; toast(`Mic error: ${err.message}`); }
+  };
 
   // ---------- theme ----------
   const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
